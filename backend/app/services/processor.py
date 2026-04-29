@@ -2,24 +2,6 @@ from typing import Dict
 from datetime import date, datetime
 from app.database import get_db_cursor
 
-TRACK_COLORS = {
-    "new-energy": "#059669",
-    "semiconductor": "#2563EB",
-    "biotech": "#7C3AED",
-    "ai": "#DB2777",
-    "ev": "#D97706",
-    "robotics": "#0891B2",
-}
-
-TRACK_NAMES = {
-    "new-energy": "新能源汽车",
-    "semiconductor": "半导体",
-    "biotech": "生物医药",
-    "ai": "人工智能",
-    "ev": "智能驾驶",
-    "robotics": "机器人",
-}
-
 def _period_to_days(period: str) -> int:
     ranges = {"7d": 7, "30d": 30, "90d": 90, "1y": 365}
     return ranges.get(period, 30)
