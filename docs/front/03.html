@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndustryPulse — 产业热点时间轴</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F8F9FB;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF1F5;
+            --text-primary: #111827;
+            --text-secondary: #4B5563;
+            --text-muted: #9CA3AF;
+            --accent-primary: #0F766E;
+            --accent-hover: #0D5D56;
+            --accent-light: #CCFBF1;
+            --accent-secondary: #7C3AED;
+            --accent-secondary-light: #EDE9FE;
+            --type-policy: #DC2626;
+            --type-funding: #059669;
+            --type-product: #2563EB;
+            --type-ma: #D97706;
+            --type-tech: #7C3AED;
+            --type-report: #0891B2;
+            --type-person: #DB2777;
+            --border: #E5E7EB;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --shadow-hover: rgba(0, 0, 0, 0.12);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .logo-text {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-left: 16px;
+            padding-left: 16px;
+            border-left: 1px solid var(--border);
+        }
+
+        /* ===== Hero Input Area ===== */
+        .hero {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 40px 40px 48px;
+        }
+
+        .hero-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .search-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 32px;
+        }
+
+        /* ===== Industry Selector ===== */
+        .industry-section {
+            margin-bottom: 24px;
+            padding: 0 4px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-label-hint {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-muted);
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        /* Delete Mode Card */
+        .delete-mode-card {
+            border: 2px dashed #EF4444;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(239, 68, 68, 0.12));
+            cursor: pointer;
+            transition: all 250ms ease;
+            border-radius: 12px;
+            padding: 22px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .delete-mode-card:hover {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.15);
+        }
+
+        .delete-mode-card .add-icon,
+        .delete-mode-card .add-label {
+            color: #EF4444;
+        }
+
+        .delete-mode-card.active {
+            border-color: #DC2626;
+            background: #FEE2E2;
+        }
+
+        .delete-mode-card.active .add-icon {
+            color: #DC2626;
+        }
+
+        .delete-mode-card.active .add-label {
+            color: #DC2626;
+            font-weight: 600;
+        }
+
+        /* Delete Mode State */
+        .industry-card.delete-mode .selected-indicator {
+            display: none;
+        }
+
+        .industry-card.delete-mode .delete-indicator {
+            display: flex;
+        }
+
+        .delete-indicator {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 22px;
+            height: 22px;
+            background: #EF4444;
+            border: 2px solid var(--bg-secondary);
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 2;
+            display: none;
+        }
+
+        .industry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            width: 100%;
+        }
+
+        .industry-card {
+            position: relative;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 22px 18px;
+            cursor: pointer;
+            transition: all 250ms ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .industry-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .industry-card.selected {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.04), rgba(15, 118, 110, 0.08));
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .industry-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            transition: transform 250ms ease;
+        }
+
+        .industry-card:hover .industry-icon {
+            transform: scale(1.08);
+        }
+
+        .industry-card.selected .industry-icon {
+            transform: scale(1.05);
+        }
+
+        .industry-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-align: center;
+            transition: color 200ms ease;
+        }
+
+        .industry-card.selected .industry-name {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .industry-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .industry-card.selected .industry-count {
+            background: var(--accent-light);
+            color: var(--accent-primary);
+        }
+
+        .selected-indicator {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 22px;
+            height: 22px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 250ms ease;
+        }
+
+        .industry-card.selected .selected-indicator {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .selected-indicator svg {
+            color: #fff;
+        }
+
+        /* Industry Colors */
+        .industry-all { background: linear-gradient(135deg, #FEE2E2, #FECACA); }
+        .industry-ai { background: linear-gradient(135deg, #E0F2FE, #BAE6FD); }
+        .industry-ev { background: linear-gradient(135deg, #DCFCE7, #BBF7D0); }
+        .industry-chip { background: linear-gradient(135deg, #FEF3C7, #FDE68A); }
+        .industry-medical { background: linear-gradient(135deg, #FCE7F3, #FBCFE8); }
+        .industry-metaverse { background: linear-gradient(135deg, #EDE9FE, #DDD6FE); }
+        .industry-robot { background: linear-gradient(135deg, #F3E8FF, #E9D5FF); }
+        .industry-biotech { background: linear-gradient(135deg, #CFFAF1, #A7F3D0); }
+        .industry-newmaterial { background: linear-gradient(135deg, #E5E7EB, #D1D5DB); }
+
+        /* Add New Card */
+        .add-card {
+            border: 2px dashed var(--accent-primary);
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.06), rgba(15, 118, 110, 0.12));
+            cursor: pointer;
+            transition: all 250ms ease;
+            border-radius: 12px;
+            padding: 22px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .add-card:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.1), rgba(15, 118, 110, 0.2));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.15);
+        }
+
+        .add-card:hover .add-icon {
+            transform: rotate(90deg);
+        }
+
+        .add-icon {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--accent-primary);
+            transition: all 250ms ease;
+        }
+
+        .add-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--accent-primary);
+            transition: color 200ms ease;
+        }
+
+        .add-card:hover .add-label {
+            color: var(--accent-hover);
+        }
+
+        /* Add Form */
+        .add-form {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-primary);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .add-form-input {
+            width: 100%;
+            padding: 10px 12px;
+            font-family: inherit;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 200ms ease;
+        }
+
+        .add-form-input:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .add-form-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .add-form-btn {
+            flex: 1;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .add-form-btn.confirm {
+            background: var(--accent-primary);
+            border: none;
+            color: #fff;
+        }
+
+        .add-form-btn.confirm:hover {
+            background: var(--accent-hover);
+        }
+
+        .add-form-btn.cancel {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .add-form-btn.cancel:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Pending Status */
+        .industry-card.pending {
+            opacity: 0.7;
+        }
+
+        .industry-card.pending:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: var(--border);
+        }
+
+        .industry-card.pending .industry-count {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .pending-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #D97706;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 0;
+            min-width: 140px;
+            box-shadow: 0 4px 20px var(--shadow-hover);
+            z-index: 1000;
+            display: none;
+        }
+
+        .context-menu.visible {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 8px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 150ms ease;
+        }
+
+        .context-menu-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .context-menu-item.danger {
+            color: #EF4444;
+        }
+
+        .context-menu-item.danger:hover {
+            background: #FEF2F2;
+        }
+
+        .context-menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 6px 0;
+        }
+
+        /* Search Row */
+        .search-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 240px;
+        }
+
+        /* Time Range Selector */
+        .time-range-group {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .time-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .time-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .time-btn.active {
+            background: var(--accent-primary);
+            color: #fff;
+        }
+
+        /* ===== Main Layout ===== */
+        .main-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 40px;
+            gap: 40px;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            position: sticky;
+            top: 24px;
+            height: fit-content;
+        }
+
+        .sidebar-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Type Filters */
+        .filter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 200ms ease;
+            border: 1px solid transparent;
+        }
+
+        .filter-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .filter-item.active {
+            background: var(--bg-tertiary);
+            border-color: var(--border);
+        }
+
+        .filter-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 200ms ease;
+            flex-shrink: 0;
+        }
+
+        .filter-item.active .filter-checkbox {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .filter-checkbox svg {
+            opacity: 0;
+            transition: opacity 200ms ease;
+        }
+
+        .filter-item.active .filter-checkbox svg {
+            opacity: 1;
+        }
+
+        .filter-color {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .filter-name {
+            font-size: 14px;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .filter-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-item {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        /* Export Buttons */
+        .export-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .export-btn {
+            flex: 1;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 200ms ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .export-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            background: var(--accent-light);
+        }
+
+        /* ===== Timeline ===== */
+        .timeline-container {
+            position: relative;
+        }
+
+        .timeline-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .timeline-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .timeline-title h2 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .timeline-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 4px 10px;
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            border-radius: 12px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            padding: 3px;
+        }
+
+        .view-btn {
+            font-family: inherit;
+            font-size: 12px;
+            padding: 6px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .view-btn.active {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px var(--shadow);
+        }
+
+        /* Timeline Line */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-primary), var(--accent-light));
+            border-radius: 1px;
+        }
+
+        /* Timeline Node */
+        .timeline-node {
+            position: relative;
+            padding-bottom: 28px;
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: nodeAppear 400ms ease forwards;
+        }
+
+        .timeline-node:nth-child(1) { animation-delay: 0ms; }
+        .timeline-node:nth-child(2) { animation-delay: 80ms; }
+        .timeline-node:nth-child(3) { animation-delay: 160ms; }
+        .timeline-node:nth-child(4) { animation-delay: 240ms; }
+        .timeline-node:nth-child(5) { animation-delay: 320ms; }
+        .timeline-node:nth-child(6) { animation-delay: 400ms; }
+
+        @keyframes nodeAppear {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .node-dot {
+            position: absolute;
+            left: -32px;
+            top: 24px;
+            width: 16px;
+            height: 16px;
+            background: var(--bg-secondary);
+            border: 3px solid var(--accent-primary);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .node-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        /* Event Card */
+        .event-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 250ms ease;
+            position: relative;
+        }
+
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow-hover);
+            border-color: var(--accent-light);
+        }
+
+        .event-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .event-source {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .source-logo {
+            width: 20px;
+            height: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .source-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .event-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            transition: color 200ms ease;
+        }
+
+        .event-card:hover .event-title {
+            color: var(--accent-primary);
+        }
+
+        .event-summary {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        /* AI Commentary */
+        .ai-commentary {
+            background: var(--accent-secondary-light);
+            border-left: 3px solid var(--accent-secondary);
+            border-radius: 0 8px 8px 0;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+
+        .ai-commentary-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .ai-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent-secondary);
+            background: #fff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ai-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        /* Event Footer */
+        .event-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .event-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .event-tag {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .event-tag.policy { background: var(--type-policy); }
+        .event-tag.funding { background: var(--type-funding); }
+        .event-tag.product { background: var(--type-product); }
+        .event-tag.ma { background: var(--type-ma); }
+        .event-tag.tech { background: var(--type-tech); }
+        .event-tag.report { background: var(--type-report); }
+        .event-tag.person { background: var(--type-person); }
+
+        .event-link {
+            font-size: 13px;
+            color: var(--accent-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 200ms ease;
+        }
+
+        .event-link:hover {
+            color: var(--accent-hover);
+        }
+
+        /* ===== Pagination ===== */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .pagination-btn {
+            font-family: inherit;
+            font-size: 13px;
+            padding: 8px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 200ms ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #fff;
+        }
+
+        .pagination-info {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 12px;
+        }
+
+        .page-size-select {
+            font-family: inherit;
+            font-size: 13px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .page-size-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        /* ===== Icons ===== */
+        .icon {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .icon-sm {
+            width: 14px;
+            height: 14px;
+        }
+
+        .icon-xs {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 24px;
+                gap: 24px;
+            }
+
+            .sidebar {
+                position: static;
+                order: -1;
+            }
+
+            .sidebar-section:first-child {
+                display: none;
+            }
+
+            .filter-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .filter-item {
+                padding: 8px 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .industry-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+
+            .industry-card {
+                padding: 16px 12px;
+            }
+
+            .industry-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
+            }
+
+            .industry-name {
+                font-size: 13px;
+            }
+
+            .add-card {
+                padding: 16px 12px;
+            }
+
+            .add-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .tagline {
+                display: none;
+            }
+
+            .hero {
+                padding: 24px 20px 32px;
+            }
+
+            .hero-title {
+                font-size: 24px;
+            }
+
+            .search-panel {
+                padding: 20px;
+            }
+
+            .industry-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .search-row {
+                flex-direction: column;
+            }
+
+            .time-range-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .time-btn {
+                flex: 1;
+                text-align: center;
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            .industry-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .timeline {
+                padding-left: 24px;
+            }
+
+            .timeline::before {
+                left: 5px;
+            }
+
+            .node-dot {
+                left: -24px;
+                width: 12px;
+                height: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            <span class="logo-text">IndustryPulse</span>
+        </div>
+        <span class="tagline">产业热点 · 时间脉络 · AI洞察</span>
+    </header>
+
+    <!-- Hero Input -->
+    <section class="hero">
+        <div class="hero-inner">
+            <h1 class="hero-title">探索产业发展脉络</h1>
+            <p class="hero-subtitle">选择产业赛道，查看历史热点事件与AI分析</p>
+
+            <div class="search-panel">
+                <div class="industry-section">
+                    <label class="section-label">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        选择产业赛道
+                        <span class="section-label-hint">（可添加或删除产业赛道）</span>
+                    </label>
+                    <div class="industry-grid" id="industryGrid">
+                        <div class="industry-card" data-industry="all" data-name="全部">
+                            <div class="industry-icon industry-all">🌍</div>
+                            <span class="industry-name">全部</span>
+                            <span class="industry-count">全部产业</span>
+                            <div class="selected-indicator">
+                                <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="delete-indicator">−</span>
+                        </div>
+                        <div class="industry-card" data-industry="人工智能" data-name="人工智能">
+                            <div class="industry-icon industry-ai">🤖</div>
+                            <span class="industry-name">人工智能</span>
+                            <span class="industry-count">1,284 条</span>
+                            <div class="selected-indicator">
+                                <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="delete-indicator">−</span>
+                        </div>
+                        <div class="industry-card" data-industry="新能源汽车" data-name="新能源汽车">
+                            <div class="industry-icon industry-ev">🚗</div>
+                            <span class="industry-name">新能源汽车</span>
+                            <span class="industry-count">956 条</span>
+                            <div class="selected-indicator">
+                                <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="delete-indicator">−</span>
+                        </div>
+                        <div class="industry-card" data-industry="半导体" data-name="半导体">
+                            <div class="industry-icon industry-chip">💻</div>
+                            <span class="industry-name">半导体</span>
+                            <span class="industry-count">723 条</span>
+                            <div class="selected-indicator">
+                                <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="delete-indicator">−</span>
+                        </div>
+                        <div class="industry-card" data-industry="医疗健康" data-name="医疗健康">
+                            <div class="industry-icon industry-medical">🏥</div>
+                            <span class="industry-name">医疗健康</span>
+                            <span class="industry-count">642 条</span>
+                            <div class="selected-indicator">
+                                <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="delete-indicator">−</span>
+                        </div>
+                        <div class="industry-card" data-industry="元宇宙" data-name="元宇宙">
+                            <div class="industry-icon industry-metaverse">🌐</div>
+                            <span class="industry-name">元宇宙</span>
+                            <span class="industry-count">389 条</span>
+                            <div class="selected-indicator">
+                                <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="delete-indicator">−</span>
+                        </div>
+                        <div class="industry-card" data-industry="机器人" data-name="机器人">
+                            <div class="industry-icon industry-robot">🦾</div>
+                            <span class="industry-name">机器人</span>
+                            <span class="industry-count">567 条</span>
+                            <div class="selected-indicator">
+                                <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="delete-indicator">−</span>
+                        </div>
+                        <div class="industry-card" data-industry="生物医药" data-name="生物医药">
+                            <div class="industry-icon industry-biotech">🧬</div>
+                            <span class="industry-name">生物医药</span>
+                            <span class="industry-count">445 条</span>
+                            <div class="selected-indicator">
+                                <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="delete-indicator">−</span>
+                        </div>
+                        <div class="industry-card" data-industry="新材料" data-name="新材料">
+                            <div class="industry-icon industry-newmaterial">⚗️</div>
+                            <span class="industry-name">新材料</span>
+                            <span class="industry-count">298 条</span>
+                            <div class="selected-indicator">
+                                <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="delete-indicator">−</span>
+                        </div>
+
+                        <!-- Add New Card -->
+                        <div class="industry-card add-card" id="addCard">
+                            <div class="add-icon">+</div>
+                            <span class="add-label">添加产业</span>
+                        </div>
+
+                        <!-- Delete Mode Card -->
+                        <div class="industry-card delete-mode-card" id="deleteCard">
+                            <div class="add-icon">−</div>
+                            <span class="add-label">删除产业</span>
+                        </div>
+
+                        <!-- Add Form (hidden by default) -->
+                        <div class="add-form" id="addForm" style="display: none;">
+                            <input type="text" class="add-form-input" id="newIndustryInput" placeholder="输入产业名称，如：量子计算">
+                            <div class="add-form-actions">
+                                <button class="add-form-btn cancel" id="cancelAdd">取消</button>
+                                <button class="add-form-btn confirm" id="confirmAdd">添加</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-row">
+                    <div class="input-group" style="flex: 0 0 auto;">
+                        <label class="section-label" style="margin-bottom: 0;">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            时间范围
+                        </label>
+                        <div class="time-range-group" style="margin-top: 10px;">
+                            <button class="time-btn" data-range="week">近一周</button>
+                            <button class="time-btn active" data-range="month">近一月</button>
+                            <button class="time-btn" data-range="quarter">近一季</button>
+                            <button class="time-btn" data-range="halfyear">近半年</button>
+                            <button class="time-btn" data-range="year">近一年</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    事件类型
+                </h3>
+                <div class="filter-list" id="filterList">
+                    <div class="filter-item active" data-type="all">
+                        <div class="filter-checkbox">
+                            <svg class="icon icon-xs" viewBox="0 0 24 24" style="color:#fff;">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="filter-name">全部</span>
+                        <span class="filter-count">24</span>
+                    </div>
+                    <div class="filter-item active" data-type="policy">
+                        <div class="filter-checkbox">
+                            <svg class="icon icon-xs" viewBox="0 0 24 24" style="color:#fff;">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="filter-name">政策</span>
+                        <span class="filter-count">5</span>
+                    </div>
+                    <div class="filter-item active" data-type="funding">
+                        <div class="filter-checkbox">
+                            <svg class="icon icon-xs" viewBox="0 0 24 24" style="color:#fff;">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="filter-name">融资</span>
+                        <span class="filter-count">8</span>
+                    </div>
+                    <div class="filter-item active" data-type="product">
+                        <div class="filter-checkbox">
+                            <svg class="icon icon-xs" viewBox="0 0 24 24" style="color:#fff;">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="filter-name">产品发布</span>
+                        <span class="filter-count">6</span>
+                    </div>
+                    <div class="filter-item" data-type="ma">
+                        <div class="filter-checkbox">
+                            <svg class="icon icon-xs" viewBox="0 0 24 24" style="color:#fff;">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="filter-name">并购</span>
+                        <span class="filter-count">2</span>
+                    </div>
+                    <div class="filter-item" data-type="tech">
+                        <div class="filter-checkbox">
+                            <svg class="icon icon-xs" viewBox="0 0 24 24" style="color:#fff;">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="filter-name">技术突破</span>
+                        <span class="filter-count">3</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    统计概览
+                </h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">事件总数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">来源媒体</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    导出数据
+                </h3>
+                <div class="export-buttons">
+                    <button class="export-btn">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        JSON
+                    </button>
+                    <button class="export-btn">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                        Markdown
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Timeline -->
+        <section class="timeline-container">
+            <div class="timeline-header">
+                <div class="timeline-title">
+                    <h2 id="timelineTitle">请选择产业赛道</h2>
+                    <span class="timeline-badge" id="timelineBadge" style="display: none;">24 条事件</span>
+                </div>
+            </div>
+
+            <div class="timeline" id="timeline">
+                <div class="empty-state">
+                    <div class="empty-illustration">
+                        <svg class="icon" viewBox="0 0 24 24" style="width:48px;height:48px;color:var(--text-muted);">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <h3 class="empty-title">选择产业赛道开始分析</h3>
+                    <p class="empty-text">从上方卡片中选择一个有历史数据的产业，即可查看该产业的热点事件时间轴</p>
+                </div>
+            </div>
+
+            <div class="pagination" id="pagination" style="display: none;">
+                <button class="pagination-btn" id="prevPage">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    上一页
+                </button>
+                <span class="pagination-info" id="pageInfo">第 1 页，共 1 页</span>
+                <button class="pagination-btn" id="nextPage">
+                    下一页
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+                <select class="page-size-select" id="pageSize">
+                    <option value="5">5条/页</option>
+                    <option value="10" selected>10条/页</option>
+                    <option value="20">20条/页</option>
+                    <option value="50">50条/页</option>
+                </select>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Predefined industries with metadata
+        const industries = [
+            { id: '人工智能', name: '人工智能', icon: '🤖', color: 'industry-ai', count: 1284 },
+            { id: '新能源汽车', name: '新能源汽车', icon: '🚗', color: 'industry-ev', count: 956 },
+            { id: '半导体', name: '半导体', icon: '💻', color: 'industry-chip', count: 723 },
+            { id: '医疗健康', name: '医疗健康', icon: '🏥', color: 'industry-medical', count: 642 },
+            { id: '元宇宙', name: '元宇宙', icon: '🌐', color: 'industry-metaverse', count: 389 },
+            { id: '机器人', name: '机器人', icon: '🦾', color: 'industry-robot', count: 567 },
+            { id: '生物医药', name: '生物医药', icon: '🧬', color: 'industry-biotech', count: 445 },
+            { id: '新材料', name: '新材料', icon: '⚗️', color: 'industry-newmaterial', count: 298 }
+        ];
+
+        // Sample timeline data
+        const timelineData = [
+            {
+                id: 1,
+                date: '2024-03-15',
+                title: 'OpenAI发布GPT-5，性能超越现有所有大模型',
+                summary: 'OpenAI在今日凌晨发布了最新一代大语言模型GPT-5，在多项基准测试中刷新纪录，展现出接近通用人工智能的能力。该模型支持多模态输入，在代码生成和数学推理方面表现尤为突出。',
+                source: '机器之心',
+                type: 'product',
+                typeName: '产品发布',
+                aiCommentary: 'GPT-5的发布将加速AI应用落地竞赛，中美AI技术差距可能进一步拉大。国内厂商需加快迭代节奏。',
+                url: '#'
+            },
+            {
+                id: 2,
+                date: '2024-03-14',
+                title: '工信部发布人工智能产业发展三年行动计划',
+                summary: '工业和信息化部正式发布《人工智能产业发展三年行动计划（2024-2026年）》，明确提出到2026年要实现人工智能核心产业规模超过1万亿元的发展目标，并部署了多项重点任务。',
+                source: '36Kr',
+                type: 'policy',
+                typeName: '政策',
+                aiCommentary: '政策加码为AI产业注入强心剂，算力基础设施、数据要素市场将成为重点投资方向。',
+                url: '#'
+            },
+            {
+                id: 3,
+                date: '2024-03-13',
+                title: '某智能驾驶公司完成45亿元D轮融资',
+                summary: '国内知名智能驾驶解决方案提供商纵目科技宣布完成D轮融资，融资金额达45亿元，由多家顶级机构联合投资。本轮融资将主要用于下一代自动驾驶技术的研发和量产落地。',
+                source: '虎嗅',
+                type: 'funding',
+                typeName: '融资',
+                aiCommentary: '智能驾驶赛道持续火热，资本向头部企业集中的趋势明显。L3级自动驾驶量产落地成关键看点。',
+                url: '#'
+            },
+            {
+                id: 4,
+                date: '2024-03-12',
+                title: '清华大学发布新型脑启发AI芯片架构',
+                summary: '清华大学团队在《Nature》子刊发表论文，提出了一种基于脑启发计算的AI芯片新架构，能耗比传统GPU降低90%以上。该技术有望在边缘计算场景实现突破。',
+                source: '雷锋网',
+                type: 'tech',
+                typeName: '技术突破',
+                aiCommentary: '底层算力创新受关注，存算一体或成下一代AI芯片主流方向。国内基础研究实力持续增强。',
+                url: '#'
+            },
+            {
+                id: 5,
+                date: '2024-03-11',
+                title: '某云计算巨头收购AI创业公司强化大模型能力',
+                summary: '国内某头部云服务商宣布以12亿元收购AI创业公司深度智控，后者专注于企业级大模型微调和部署技术。此次收购旨在强化该云厂商在B端AI服务市场的竞争力。',
+                source: '财经网',
+                type: 'ma',
+                typeName: '并购',
+                aiCommentary: '大厂通过并购补齐技术短板将成为常态。AI创业公司的估值有望得到头部玩家的支撑。',
+                url: '#'
+            },
+            {
+                id: 6,
+                date: '2024-03-10',
+                title: 'Meta发布开源多模态模型LLaMA-3',
+                summary: 'Meta公司发布了最新一代开源大语言模型LLaMA-3，该模型在多项测试中表现接近GPT-4，且完全开源可商用。此举被认为是对闭源AI厂商的重要挑战。',
+                source: '机器之心',
+                type: 'product',
+                typeName: '产品发布',
+                aiCommentary: '开源模型能力逼近闭源产品，中小企业AI应用门槛将大幅降低。开源生态竞争进入新阶段。',
+                url: '#'
+            },
+            {
+                id: 7,
+                date: '2024-03-09',
+                title: '英伟达推出新一代AI训练芯片Blackwell',
+                summary: '英伟达在GTC大会上发布了新一代AI训练芯片Blackwell GB200，其AI性能达到上一代Hopper的5倍。多家云厂商宣布将采用该芯片构建下一代AI基础设施。',
+                source: '机器之心',
+                type: 'product',
+                typeName: '产品发布',
+                aiCommentary: '英伟达持续引领AI算力芯片竞争，新架构将推动大模型训练效率进一步提升。',
+                url: '#'
+            },
+            {
+                id: 8,
+                date: '2024-03-08',
+                title: '北京发布自动驾驶出租车商业化试点政策',
+                summary: '北京市交通委员会宣布在亦庄区域开放自动驾驶出租车商业化运营许可，允许企业向公众收取费用。这是国内首个一线城市的自动驾驶商业化落地政策。',
+                source: '36Kr',
+                type: 'policy',
+                typeName: '政策',
+                aiCommentary: '自动驾驶商业化迈出关键一步，京城或将掀起Robotaxi新一轮竞争热潮。',
+                url: '#'
+            },
+            {
+                id: 9,
+                date: '2024-03-07',
+                title: '字节跳动AI助手「豆包」月活突破1亿',
+                summary: '字节跳动旗下AI助手产品「豆包」宣布月活用户已突破1亿，成为国内仅次于百度文心一言的第二大AI应用。该产品凭借抖音流量入口实现快速扩张。',
+                source: '虎嗅',
+                type: 'product',
+                typeName: '产品发布',
+                aiCommentary: '字节跳动凭借流量优势在AI应用赛道实现弯道超车，短视频+AI或成新入口。',
+                url: '#'
+            },
+            {
+                id: 10,
+                date: '2024-03-06',
+                title: '华为发布盘古大模型5.0，多项能力超越GPT-4',
+                summary: '华为在开发者大会上正式发布盘古大模型5.0，在代码生成、数学推理等多项基准测试中超越GPT-4。该模型已全面接入华为云服务，企业可直接调用API。',
+                source: '机器之心',
+                type: 'product',
+                typeName: '产品发布',
+                aiCommentary: '华为盘古迭代速度加快，国产大模型竞争进入实用化阶段。',
+                url: '#'
+            },
+            {
+                id: 11,
+                date: '2024-03-05',
+                title: '某AI制药公司完成20亿元B轮融资',
+                summary: 'AI制药创新企业晶泰科技宣布完成20亿元B轮融资，由红杉中国和高瓴创投联合领投。本轮融资将用于AI药物发现平台的升级和临床管线的推进。',
+                source: '财经网',
+                type: 'funding',
+                typeName: '融资',
+                aiCommentary: 'AI制药赛道持续吸引资本关注，药物研发效率提升成核心竞争点。',
+                url: '#'
+            },
+            {
+                id: 12,
+                date: '2024-03-04',
+                title: '工信部等七部门联合印发机器人+行动计划',
+                summary: '工信部等七部门联合发布《机器人+行动计划》，提出到2025年制造业机器人密度翻番的目标，并在汽车、电子、医疗等领域开展机器人应用示范。',
+                source: '36Kr',
+                type: 'policy',
+                typeName: '政策',
+                aiCommentary: '政策组合拳推动机器人产业规模化应用，工业机器人国产替代加速。',
+                url: '#'
+            },
+            {
+                id: 13,
+                date: '2024-03-03',
+                title: '特斯拉人形机器人Optimus进入工厂试点',
+                summary: '特斯拉CEO马斯克宣布，人形机器人Optimus已在特斯拉工厂开始执行简单任务，如搬运零部件等。特斯拉计划在未来几年内大规模部署至各工厂。',
+                source: '虎嗅',
+                type: 'person',
+                typeName: '人物动态',
+                aiCommentary: '人形机器人从概念走向落地，制造业自动化再进一步。',
+                url: '#'
+            },
+            {
+                id: 14,
+                date: '2024-03-02',
+                title: '商汤科技发布医疗大模型「见医」',
+                summary: '商汤科技发布医疗垂直领域大模型「见医」，可辅助医生进行医学影像分析和病历分析。该模型已在国内多家三甲医院开展试点应用。',
+                source: '雷锋网',
+                type: 'tech',
+                typeName: '技术突破',
+                aiCommentary: 'AI医疗落地提速，垂直领域大模型或成新蓝海。',
+                url: '#'
+            },
+            {
+                id: 15,
+                date: '2024-03-01',
+                title: '阿里云宣布大模型API降价90%',
+                summary: '阿里云宣布旗下通义千问系列大模型API价格下调90%，并发调用能力提升至业内领先水平。此举被视为国内大模型价格战的开端。',
+                source: '财经网',
+                type: 'policy',
+                typeName: '政策',
+                aiCommentary: '大模型价格战加速应用普及，中小开发者将显著受益。',
+                url: '#'
+            },
+            {
+                id: 16,
+                date: '2024-02-28',
+                title: '三星电子收购某德国汽车AI公司',
+                summary: '三星电子宣布以约8亿美元收购德国汽车AI初创公司Heylon GmbH，后者专注于车载语音助手和自动驾驶视觉系统。此举标志着三星正式进军汽车AI市场。',
+                source: '机器之心',
+                type: 'ma',
+                typeName: '并购',
+                aiCommentary: '韩系厂商加速汽车电子布局，AI芯片竞争延伸至汽车领域。',
+                url: '#'
+            },
+            {
+                id: 17,
+                date: '2024-02-27',
+                title: '小鹏汽车城市NOA覆盖200座城市',
+                summary: '小鹏汽车宣布其城市导航辅助驾驶（NOA）功能已覆盖国内200座城市，成为国内城市NOA覆盖范围最广的车企。该功能基于自研的XNGP智能驾驶系统实现。',
+                source: '虎嗅',
+                type: 'product',
+                typeName: '产品发布',
+                aiCommentary: '城市NOA竞争白热化，智能驾驶下半场争夺城市份额。',
+                url: '#'
+            },
+            {
+                id: 18,
+                date: '2024-02-26',
+                title: 'OPPO发布Find X7系列搭载70亿参数大模型',
+                summary: 'OPPO发布旗舰手机Find X7系列，首次在端侧部署70亿参数大模型，实现本地化的AI生图、AI翻译等功能。该手机搭载联发科天玑9300芯片。',
+                source: '36Kr',
+                type: 'product',
+                typeName: '产品发布',
+                aiCommentary: '端侧AI成手机新卖点，大模型本地化部署成为趋势。',
+                url: '#'
+            },
+            {
+                id: 19,
+                date: '2024-02-25',
+                title: '中芯国际14nm芯片产能突破10万片/月',
+                summary: '中芯国际宣布其14nm制程芯片产能已突破10万片/月，良率达到国际先进水平。该产能主要用于支持国内AI芯片设计企业的流片需求。',
+                source: '财经网',
+                type: 'tech',
+                typeName: '技术突破',
+                aiCommentary: '国产芯片产能爬坡持续推进，14nm以上制程国产化加速。',
+                url: '#'
+            },
+            {
+                id: 20,
+                date: '2024-02-24',
+                title: '科大讯飞发布星火大模型4.0，宣称超越GPT-4 Turbo',
+                summary: '科大讯飞发布星火大模型4.0，在中文理解、逻辑推理等多项测试中宣称超越GPT-4 Turbo。该模型已接入讯飞开放平台，面向开发者开放API调用。',
+                source: '机器之心',
+                type: 'product',
+                typeName: '产品发布',
+                aiCommentary: '国产大模型能力逼近国际前沿，中文场景优势显现。',
+                url: '#'
+            }
+        ];
+
+        // State
+        let selectedIndustry = null;
+        const userIndustries = [];
+        let deleteMode = false;
+
+        // Pagination state
+        let currentPage = 1;
+        let pageSize = 10;
+        let totalItems = 0;
+        let currentData = [];
+
+        // DOM elements
+        const industryGrid = document.getElementById('industryGrid');
+        const filterList = document.getElementById('filterList');
+        const timeline = document.getElementById('timeline');
+        const timelineTitle = document.getElementById('timelineTitle');
+        const timelineBadge = document.getElementById('timelineBadge');
+        const timeBtns = document.querySelectorAll('.time-btn');
+        const addCard = document.getElementById('addCard');
+        const addForm = document.getElementById('addForm');
+        const newIndustryInput = document.getElementById('newIndustryInput');
+        const cancelAdd = document.getElementById('cancelAdd');
+        const confirmAdd = document.getElementById('confirmAdd');
+        const deleteCard = document.getElementById('deleteCard');
+
+        // Source logo map
+        const sourceLogos = {
+            '机器之心': '机',
+            '36Kr': '36',
+            '虎嗅': '虎',
+            '雷锋网': '雷',
+            '财经网': '财'
+        };
+
+        // Render a user-added industry card
+        function renderUserIndustryCard(name) {
+            const card = document.createElement('div');
+            card.className = 'industry-card pending';
+            card.dataset.industry = name;
+            card.dataset.name = name;
+            card.innerHTML = `
+                <div class="industry-icon" style="background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-primary));">📡</div>
+                <span class="industry-name">${name}</span>
+                <span class="industry-count">0 条</span>
+                <span class="pending-badge">⏳ 待采集</span>
+                <div class="selected-indicator">
+                    <svg class="icon icon-xs" viewBox="0 0 24 24" style="width:12px;height:12px;">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <span class="delete-indicator">−</span>
+            `;
+            return card;
+        }
+
+        // Show add form
+        addCard.addEventListener('click', () => {
+            addCard.style.display = 'none';
+            // Move addForm before deleteCard for proper visual order
+            industryGrid.insertBefore(addForm, deleteCard);
+            addForm.style.display = 'flex';
+            newIndustryInput.focus();
+        });
+
+        // Cancel add
+        cancelAdd.addEventListener('click', () => {
+            addForm.style.display = 'none';
+            // Move addForm back to original position (after deleteCard)
+            industryGrid.insertBefore(addForm, deleteCard.nextSibling);
+            addCard.style.display = 'flex';
+            newIndustryInput.value = '';
+        });
+
+        // Confirm add
+        confirmAdd.addEventListener('click', () => {
+            const name = newIndustryInput.value.trim();
+            if (!name) {
+                newIndustryInput.style.borderColor = '#DC2626';
+                setTimeout(() => {
+                    newIndustryInput.style.borderColor = '';
+                }, 1000);
+                return;
+            }
+
+            // Check if already exists
+            const existingCards = document.querySelectorAll('.industry-card[data-industry]');
+            for (const card of existingCards) {
+                if (card.dataset.industry === name) {
+                    alert('该产业已存在');
+                    return;
+                }
+            }
+
+            // Add to user industries
+            userIndustries.push(name);
+
+            // Render new card before addForm (which is now before deleteCard after our move)
+            const newCard = renderUserIndustryCard(name);
+            industryGrid.insertBefore(newCard, addForm);
+
+            // Hide form, show add card again and move form back to original position
+            addForm.style.display = 'none';
+            industryGrid.appendChild(addForm);
+            addCard.style.display = 'flex';
+            newIndustryInput.value = '';
+
+            // In real app: send to backend to queue data collection
+            console.log('Added new industry:', name);
+        });
+
+        // Delete mode toggle
+        deleteCard.addEventListener('click', () => {
+            deleteMode = !deleteMode;
+            const allCards = document.querySelectorAll('.industry-card');
+
+            if (deleteMode) {
+                deleteCard.classList.add('active');
+                deleteCard.querySelector('.add-label').textContent = '完成删除';
+                // Deselect any selected card
+                document.querySelectorAll('.industry-card.selected').forEach(c => {
+                    c.classList.remove('selected');
+                });
+                selectedIndustry = null;
+                // Hide add card during delete mode
+                addCard.style.display = 'none';
+                // Add delete mode class to all cards
+                allCards.forEach(card => card.classList.add('delete-mode'));
+            } else {
+                deleteCard.classList.remove('active');
+                deleteCard.querySelector('.add-label').textContent = '删除产业';
+                addCard.style.display = 'flex';
+                allCards.forEach(card => card.classList.remove('delete-mode'));
+            }
+        });
+
+        // Delete handler (event delegation for delete button and delete indicator)
+        industryGrid.addEventListener('click', (e) => {
+            // Handle delete indicator (−) in delete mode
+            if (e.target.closest('.delete-indicator')) {
+                e.stopPropagation();
+                const card = e.target.closest('.industry-card');
+                const name = card.dataset.industry;
+
+                const idx = userIndustries.indexOf(name);
+                if (idx > -1) {
+                    userIndustries.splice(idx, 1);
+                }
+
+                if (selectedIndustry === name) {
+                    selectedIndustry = 'all';
+                }
+
+                if (name !== 'all') {
+                    card.remove();
+                }
+                console.log('Deleted industry:', name);
+                return;
+            }
+
+            // Handle old delete button (×) for user-added cards
+            const deleteBtn = e.target.closest('.delete-btn');
+            if (deleteBtn) {
+                e.stopPropagation();
+
+                const card = deleteBtn.closest('.industry-card');
+                const name = card.dataset.industry;
+
+                const idx = userIndustries.indexOf(name);
+                if (idx > -1) {
+                    userIndustries.splice(idx, 1);
+                }
+
+                if (selectedIndustry === name) {
+                    selectedIndustry = null;
+                }
+
+                card.remove();
+                console.log('Deleted industry:', name);
+                return;
+            }
+
+            // In delete mode, prevent card selection
+            if (deleteMode) {
+                return;
+            }
+        });
+
+        // Allow Enter key to submit
+        newIndustryInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                confirmAdd.click();
+            } else if (e.key === 'Escape') {
+                cancelAdd.click();
+            }
+        });
+
+        // Auto-generate timeline
+        function generateTimeline() {
+            const activeRange = document.querySelector('.time-btn.active');
+            const range = activeRange ? activeRange.dataset.range : 'month';
+            const rangeText = {
+                'week': '近一周',
+                'month': '近一月',
+                'quarter': '近一季',
+                'halfyear': '近半年',
+                'year': '近一年'
+            };
+
+            let title = selectedIndustry === 'all' ? '全部' : selectedIndustry;
+            timelineTitle.textContent = `${title || '全部'} · ${rangeText[range]}`;
+            // In a real app, this would fetch data based on selectedIndustry and range
+            renderTimeline(timelineData);
+        }
+
+        // Industry card selection
+        industryGrid.addEventListener('click', (e) => {
+            const card = e.target.closest('.industry-card');
+            if (!card || card.classList.contains('pending')) return;
+
+            const industryId = card.dataset.industry;
+
+            // Deselect previous
+            document.querySelectorAll('.industry-card:not(.pending)').forEach(c => {
+                c.classList.remove('selected');
+            });
+
+            // Select new
+            card.classList.add('selected');
+            selectedIndustry = industryId;
+
+            // Auto generate timeline
+            generateTimeline();
+        });
+
+        // Time range buttons
+        timeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                timeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                if (selectedIndustry || selectedIndustry === 'all') {
+                    const range = btn.dataset.range;
+                    const rangeText = {
+                        'week': '近一周',
+                        'month': '近一月',
+                        'quarter': '近一季',
+                        'halfyear': '近半年',
+                        'year': '近一年'
+                    };
+                    let title = selectedIndustry === 'all' ? '全部' : selectedIndustry;
+                    timelineTitle.textContent = `${title} · ${rangeText[range]}`;
+                    // In a real app, this would fetch data for the new range
+                    renderTimeline(timelineData);
+                }
+            });
+        });
+
+        // Render timeline
+        function renderTimeline(data) {
+            console.log('renderTimeline called:', data.length, 'items');
+            currentData = data;
+            totalItems = data.length;
+            currentPage = 1;
+            console.log('Setting pagination state:', { totalItems, pageSize });
+            renderPage();
+            updatePagination();
+        }
+
+        function renderPage() {
+            if (!currentData || currentData.length === 0) {
+                timeline.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-illustration">
+                            <svg class="icon" viewBox="0 0 24 24" style="width:48px;height:48px;color:var(--text-muted);">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <h3 class="empty-title">该时间段内无事件</h3>
+                        <p class="empty-text">请尝试调整时间范围，或选择其他产业赛道</p>
+                    </div>
+                `;
+                timelineBadge.style.display = 'none';
+                pagination.style.display = 'none';
+                return;
+            }
+
+            const totalPages = Math.ceil(totalItems / pageSize);
+            const startIdx = (currentPage - 1) * pageSize;
+            const endIdx = Math.min(startIdx + pageSize, totalItems);
+            const pageData = currentData.slice(startIdx, endIdx);
+
+            timelineBadge.style.display = 'inline-block';
+            timelineBadge.textContent = `${totalItems} 条事件`;
+
+            timeline.innerHTML = pageData.map(item => `
+                <div class="timeline-node" data-type="${item.type}">
+                    <div class="node-dot"></div>
+                    <div class="node-date">${item.date}</div>
+                    <div class="event-card">
+                        <div class="event-source">
+                            <span class="source-logo">${sourceLogos[item.source] || item.source.slice(0, 2)}</span>
+                            <span class="source-name">${item.source}</span>
+                        </div>
+                        <h3 class="event-title">${item.title}</h3>
+                        <p class="event-summary">${item.summary}</p>
+                        <div class="ai-commentary">
+                            <div class="ai-commentary-header">
+                                <span class="ai-badge">
+                                    <svg class="icon icon-xs" viewBox="0 0 24 24">
+                                        <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
+                                        <path d="M12 2a7 7 0 0 1 7 7h-7V2z" fill="currentColor"></path>
+                                    </svg>
+                                    AI 点评
+                                </span>
+                            </div>
+                            <p class="ai-text">${item.aiCommentary}</p>
+                        </div>
+                        <div class="event-footer">
+                            <div class="event-tags">
+                                <span class="event-tag ${item.type}">${item.typeName}</span>
+                            </div>
+                            <a href="${item.url}" class="event-link" target="_blank">
+                                阅读原文
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            pagination.style.display = totalPages >= 1 ? 'flex' : 'none';
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(totalItems / pageSize);
+            console.log('updatePagination:', { totalItems, pageSize, totalPages, currentPage });
+            pageInfo.textContent = `第 ${currentPage} 页，共 ${totalPages} 页`;
+            prevPage.disabled = currentPage <= 1;
+            nextPage.disabled = currentPage >= totalPages;
+        }
+
+        // Filter handlers
+        filterList.addEventListener('click', (e) => {
+            const filterItem = e.target.closest('.filter-item');
+            if (!filterItem) return;
+
+            const type = filterItem.dataset.type;
+
+            if (type === 'all') {
+                const allActive = [...filterList.querySelectorAll('.filter-item')].every(
+                    item => item.classList.contains('active')
+                );
+                filterList.querySelectorAll('.filter-item').forEach(item => {
+                    if (allActive) {
+                        item.classList.remove('active');
+                    } else {
+                        item.classList.add('active');
+                    }
+                });
+            } else {
+                filterItem.classList.toggle('active');
+                const individualFilters = [...filterList.querySelectorAll('.filter-item:not([data-type="all"])')];
+                const allSelected = individualFilters.every(item => item.classList.contains('active'));
+                const allFilter = filterList.querySelector('[data-type="all"]');
+                allFilter.classList.toggle('active', allSelected);
+            }
+
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const activeFilters = [...filterList.querySelectorAll('.filter-item.active')]
+                .map(item => item.dataset.type)
+                .filter(type => type !== 'all');
+
+            const nodes = timeline.querySelectorAll('.timeline-node');
+            nodes.forEach(node => {
+                const type = node.dataset.type;
+                if (activeFilters.includes(type)) {
+                    node.style.display = 'block';
+                } else {
+                    node.style.display = 'none';
+                }
+            });
+        }
+
+        // Pagination elements
+        const pagination = document.getElementById('pagination');
+        const prevPage = document.getElementById('prevPage');
+        const nextPage = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+        const pageSizeSelect = document.getElementById('pageSize');
+
+        // Pagination handlers
+        prevPage.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage();
+                updatePagination();
+                window.scrollTo({ top: timeline.offsetTop - 100, behavior: 'smooth' });
+            }
+        });
+
+        nextPage.addEventListener('click', () => {
+            const totalPages = Math.ceil(totalItems / pageSize);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage();
+                updatePagination();
+                window.scrollTo({ top: timeline.offsetTop - 100, behavior: 'smooth' });
+            }
+        });
+
+        pageSizeSelect.addEventListener('change', () => {
+            pageSize = parseInt(pageSizeSelect.value);
+            currentPage = 1;
+            updatePagination();
+            renderPage();
+        });
+
+        // Context Menu
+        const contextMenu = document.createElement('div');
+        contextMenu.className = 'context-menu';
+        contextMenu.innerHTML = `
+            <div class="context-menu-item danger" id="contextDelete">
+                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                删除产业
+            </div>
+        `;
+        document.body.appendChild(contextMenu);
+
+        let contextTargetCard = null;
+
+        // Show context menu
+        industryGrid.addEventListener('contextmenu', (e) => {
+            const card = e.target.closest('.industry-card');
+            if (!card) return;
+
+            e.preventDefault();
+            contextTargetCard = card;
+
+            // Position menu
+            const x = e.clientX;
+            const y = e.clientY;
+            contextMenu.style.left = x + 'px';
+            contextMenu.style.top = y + 'px';
+            contextMenu.classList.add('visible');
+        });
+
+        // Hide context menu on click outside
+        document.addEventListener('click', () => {
+            contextMenu.classList.remove('visible');
+        });
+
+        // Delete from context menu
+        document.getElementById('contextDelete').addEventListener('click', () => {
+            if (!contextTargetCard) return;
+
+            const name = contextTargetCard.dataset.industry;
+            const idx = userIndustries.indexOf(name);
+            if (idx > -1) {
+                userIndustries.splice(idx, 1);
+            }
+
+            if (selectedIndustry === name) {
+                selectedIndustry = null;
+            }
+
+            contextTargetCard.remove();
+            contextMenu.classList.remove('visible');
+            contextTargetCard = null;
+
+            console.log('Deleted industry:', name);
+        });
+    </script>
+</body>
+</html>

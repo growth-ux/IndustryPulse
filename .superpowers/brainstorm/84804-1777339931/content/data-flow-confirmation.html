@@ -1,0 +1,52 @@
+<h2>候选架构：异步预抓取 + MySQL 存储 + 时间轴查询</h2>
+<p class="subtitle">这是当前收敛后的主链路：复试前和运行中都能抓取，用户查询时不等待外部新闻源。</p>
+
+<div class="mockup">
+  <div class="mockup-header">数据流</div>
+  <div class="mockup-body">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:stretch;text-align:center">
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px">
+        <b>RSS 源配置</b><br><small>科技媒体 / 政策公告 / 行业资讯</small>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:24px">→</div>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px">
+        <b>异步抓取任务</b><br><small>定时 + 手动触发</small>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:24px">→</div>
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:14px">
+        <b>解析与去重</b><br><small>标题 / 链接 / 发布时间 / 摘要</small>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;font-size:28px;margin:10px 0">↓</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:stretch;text-align:center">
+      <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px;padding:14px">
+        <b>分类 + AI 点评</b><br><small>入库时生成，50 字内</small>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:24px">→</div>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px">
+        <b>MySQL 存储</b><br><small>事件 / 来源 / 抓取任务</small>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:24px">→</div>
+      <div style="background:#ecfeff;border:1px solid #a5f3fc;border-radius:12px;padding:14px">
+        <b>Web 查询</b><br><small>关键词 + 时间范围 → 纵向时间轴</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>整体链路 OK</h3>
+      <p>下一步进入方案取舍和完整设计。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="revise" onclick="toggleSelect(this)">
+    <div class="letter">↺</div>
+    <div class="content">
+      <h3>需要调整</h3>
+      <p>例如存储、抓取触发、点评生成时机或页面展示。</p>
+    </div>
+  </div>
+</div>

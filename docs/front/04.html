@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndustryPulse — 订阅源管理</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F8F9FB;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF1F5;
+            --text-primary: #111827;
+            --text-secondary: #4B5563;
+            --text-muted: #9CA3AF;
+            --accent-primary: #0F766E;
+            --accent-hover: #0D5D56;
+            --accent-light: #CCFBF1;
+            --accent-secondary: #7C3AED;
+            --accent-secondary-light: #EDE9FE;
+            --border: #E5E7EB;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --shadow-hover: rgba(0, 0, 0, 0.12);
+            --source-official: #059669;
+            --source-media: #2563EB;
+            --source-academic: #7C3AED;
+            --source-social: #DB2777;
+            --source-data: #D97706;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .logo-text {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 200ms ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-link.active {
+            color: var(--accent-primary);
+            background: var(--accent-light);
+            font-weight: 600;
+        }
+
+        .nav-link .icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 40px 40px 48px;
+        }
+
+        .hero-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* ===== Main Content ===== */
+        .main-container {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 40px;
+        }
+
+        /* ===== Source Categories Sidebar ===== */
+        .categories-panel {
+            position: sticky;
+            top: 24px;
+            height: fit-content;
+        }
+
+        .category-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .category-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 200ms ease;
+            border: 1px solid transparent;
+        }
+
+        .category-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .category-item.active {
+            background: var(--bg-tertiary);
+            border-color: var(--border);
+        }
+
+        .category-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .category-dot.official { background: var(--source-official); }
+        .category-dot.media { background: var(--source-media); }
+        .category-dot.academic { background: var(--source-academic); }
+        .category-dot.social { background: var(--source-social); }
+        .category-dot.data { background: var(--source-data); }
+
+        .category-name {
+            font-size: 14px;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .category-stats {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .category-stat-enabled {
+            color: var(--source-official);
+        }
+
+        .category-stat-disabled {
+            color: #EF4444;
+        }
+
+        /* Stats Panel */
+        .stats-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .health-bar {
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--source-official), var(--accent-primary));
+            border-radius: 3px;
+            transition: width 500ms ease;
+        }
+
+        .health-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* ===== Source List ===== */
+        .source-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .source-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .source-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 22px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .source-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 4px 10px;
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            border-radius: 12px;
+        }
+
+        .add-source-btn {
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            background: var(--accent-primary);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 200ms ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-source-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+        }
+
+        .add-source-btn .icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Source Grid */
+        .source-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .source-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 250ms ease;
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: cardAppear 400ms ease forwards;
+        }
+
+        .source-card:nth-child(1) { animation-delay: 0ms; }
+        .source-card:nth-child(2) { animation-delay: 60ms; }
+        .source-card:nth-child(3) { animation-delay: 120ms; }
+        .source-card:nth-child(4) { animation-delay: 180ms; }
+        .source-card:nth-child(5) { animation-delay: 240ms; }
+        .source-card:nth-child(6) { animation-delay: 300ms; }
+
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .source-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow-hover);
+            border-color: var(--accent-light);
+        }
+
+        .source-card.disabled {
+            opacity: 0.6;
+        }
+
+        .source-card.disabled .source-name,
+        .source-card.disabled .source-desc {
+            color: var(--text-muted);
+        }
+
+        .source-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .source-logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .source-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .source-logo.official { background: linear-gradient(135deg, var(--source-official), #047857); }
+        .source-logo.media { background: linear-gradient(135deg, var(--source-media), #1D4ED8); }
+        .source-logo.academic { background: linear-gradient(135deg, var(--source-academic), #5B21B6); }
+        .source-logo.social { background: linear-gradient(135deg, var(--source-social), #BE185D); }
+        .source-logo.data { background: linear-gradient(135deg, var(--source-data), #B45309); }
+
+        .source-info {
+            flex: 1;
+        }
+
+        .source-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .source-category-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .source-category-tag.official { background: var(--source-official); }
+        .source-category-tag.media { background: var(--source-media); }
+        .source-category-tag.academic { background: var(--source-academic); }
+        .source-category-tag.social { background: var(--source-social); }
+        .source-category-tag.data { background: var(--source-data); }
+
+        .source-toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .source-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .source-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            transition: all 200ms ease;
+        }
+
+        .source-toggle-slider::before {
+            position: absolute;
+            content: '';
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+            transition: all 200ms ease;
+            box-shadow: 0 1px 3px var(--shadow);
+        }
+
+        .source-toggle input:checked + .source-toggle-slider {
+            background: var(--accent-primary);
+        }
+
+        .source-toggle input:checked + .source-toggle-slider::before {
+            transform: translateX(20px);
+        }
+
+        .source-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .source-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .source-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .source-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .source-stat .icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        .source-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .source-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .source-action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 200ms ease;
+        }
+
+        .source-action-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .source-action-btn.danger:hover {
+            background: #FEF2F2;
+            color: #EF4444;
+        }
+
+        .source-action-btn .icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Add Source Card */
+        .add-source-card {
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 250ms ease;
+            min-height: 200px;
+        }
+
+        .add-source-card:hover {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.04), rgba(15, 118, 110, 0.08));
+        }
+
+        .add-source-card:hover .add-icon {
+            transform: scale(1.1);
+            color: var(--accent-primary);
+        }
+
+        .add-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--text-muted);
+            transition: all 250ms ease;
+        }
+
+        .add-source-card:hover .add-icon {
+            background: var(--accent-light);
+        }
+
+        .add-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .add-source-card:hover .add-label {
+            color: var(--accent-primary);
+        }
+
+        /* Add Source Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 300ms ease;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 480px;
+            margin: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px) scale(0.95);
+            transition: all 300ms ease;
+        }
+
+        .modal-overlay.visible .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 200ms ease;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .modal-close .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            transition: all 200ms ease;
+            background: var(--bg-primary);
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            transition: all 200ms ease;
+            background: var(--bg-primary);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        .form-select:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            transition: all 200ms ease;
+            background: var(--bg-primary);
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-textarea:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .modal-btn.primary {
+            background: var(--accent-primary);
+            border: none;
+            color: #fff;
+        }
+
+        .modal-btn.primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .modal-btn.secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .modal-btn.secondary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Delete Confirmation Modal */
+        .delete-modal .modal {
+            max-width: 400px;
+        }
+
+        .delete-modal-content {
+            text-align: center;
+        }
+
+        .delete-icon-wrap {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #FEF2F2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .delete-icon-wrap .icon {
+            width: 32px;
+            height: 32px;
+            color: #EF4444;
+        }
+
+        .delete-modal-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .delete-modal-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .delete-modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .delete-modal-btn {
+            flex: 1;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .delete-modal-btn.danger {
+            background: #EF4444;
+            border: none;
+            color: #fff;
+        }
+
+        .delete-modal-btn.danger:hover {
+            background: #DC2626;
+        }
+
+        .delete-modal-btn.cancel {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .delete-modal-btn.cancel:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-illustration {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .empty-illustration .icon {
+            width: 40px;
+            height: 40px;
+            color: var(--text-muted);
+        }
+
+        .empty-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 320px;
+        }
+
+        /* ===== Icons ===== */
+        .icon {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .icon-sm {
+            width: 14px;
+            height: 14px;
+        }
+
+        .icon-xs {
+            width: 12px;
+            height: 12px;
+        }
+
+        .icon-md {
+            width: 18px;
+            height: 18px;
+        }
+
+        .icon-lg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 24px;
+            }
+
+            .categories-panel {
+                position: static;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .category-section {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .hero {
+                padding: 24px 20px 32px;
+            }
+
+            .hero-title {
+                font-size: 24px;
+            }
+
+            .categories-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .source-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .source-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .source-header {
+                padding-bottom: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="#" class="logo">
+            <div class="logo-icon">
+                <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            <span class="logo-text">IndustryPulse</span>
+        </a>
+        <nav class="nav-links">
+            <a href="#" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                产业赛道
+            </a>
+            <a href="#" class="nav-link active">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg>
+                订阅源管理
+            </a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-inner">
+            <h1 class="hero-title">订阅源管理中心</h1>
+            <p class="hero-subtitle">管理您的信息采集来源，定制个性化产业监测网络</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Categories Sidebar -->
+        <aside class="categories-panel">
+            <div class="category-section">
+                <h3 class="category-title">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    订阅源分类
+                </h3>
+                <div class="category-list" id="categoryList">
+                    <div class="category-item active" data-category="all">
+                        <div class="category-dot" style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));"></div>
+                        <span class="category-name">全部来源</span>
+                        <div class="category-stats">
+                            <span class="category-count" id="totalCount">12</span>
+                        </div>
+                    </div>
+                    <div class="category-item" data-category="official">
+                        <div class="category-dot official"></div>
+                        <span class="category-name">官方数据</span>
+                        <div class="category-stats">
+                            <span class="category-stat category-stat-enabled">3</span>
+                            <span class="category-stat category-stat-disabled">0</span>
+                        </div>
+                    </div>
+                    <div class="category-item" data-category="media">
+                        <div class="category-dot media"></div>
+                        <span class="category-name">媒体资讯</span>
+                        <div class="category-stats">
+                            <span class="category-stat category-stat-enabled">5</span>
+                            <span class="category-stat category-stat-disabled">1</span>
+                        </div>
+                    </div>
+                    <div class="category-item" data-category="academic">
+                        <div class="category-dot academic"></div>
+                        <span class="category-name">学术研究</span>
+                        <div class="category-stats">
+                            <span class="category-stat category-stat-enabled">2</span>
+                            <span class="category-stat category-stat-disabled">0</span>
+                        </div>
+                    </div>
+                    <div class="category-item" data-category="social">
+                        <div class="category-dot social"></div>
+                        <span class="category-name">社交媒体</span>
+                        <div class="category-stats">
+                            <span class="category-stat category-stat-enabled">1</span>
+                            <span class="category-stat category-stat-disabled">0</span>
+                        </div>
+                    </div>
+                    <div class="category-item" data-category="data">
+                        <div class="category-dot data"></div>
+                        <span class="category-name">数据平台</span>
+                        <div class="category-stats">
+                            <span class="category-stat category-stat-enabled">1</span>
+                            <span class="category-stat category-stat-disabled">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <h3 class="category-title">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    采集统计
+                </h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="statTotal">12</div>
+                        <div class="stat-label">订阅总数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statActive">12</div>
+                        <div class="stat-label">活跃源</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Source List -->
+        <section class="source-panel">
+            <div class="source-header">
+                <h2 class="source-title">
+                    <span id="currentCategoryName">全部订阅源</span>
+                    <span class="source-badge" id="sourceBadge">12 个来源</span>
+                </h2>
+                <button class="add-source-btn" id="openAddModal">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    添加订阅源
+                </button>
+            </div>
+
+            <div class="source-grid" id="sourceGrid">
+                <!-- Official Sources -->
+                <div class="source-card" data-category="official" data-id="1">
+                    <div class="source-card-header">
+                        <div class="source-logo-wrap">
+                            <div class="source-logo official">工</div>
+                            <div class="source-info">
+                                <div class="source-name">工信部官网</div>
+                                <span class="source-category-tag official">官方数据</span>
+                            </div>
+                        </div>
+                        <label class="source-toggle">
+                            <input type="checkbox" checked>
+                            <span class="source-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p class="source-desc">工业和信息化部官方政策发布平台，提供最权威的产业政策、规划文件和数据统计。</p>
+                    <div class="source-meta">
+                        <div class="source-stats">
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <span class="source-stat-value">1,247</span>
+                            </div>
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span class="source-stat-value">2小时前</span>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="source-action-btn" title="编辑">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="source-action-btn danger" title="删除" data-delete="1">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="source-card" data-category="official" data-id="2">
+                    <div class="source-card-header">
+                        <div class="source-logo-wrap">
+                            <div class="source-logo official">发</div>
+                            <div class="source-info">
+                                <div class="source-name">国家发改委</div>
+                                <span class="source-category-tag official">官方数据</span>
+                            </div>
+                        </div>
+                        <label class="source-toggle">
+                            <input type="checkbox" checked>
+                            <span class="source-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p class="source-desc">国家发展和改革委员会官方网站，发布宏观经济政策、项目审批和产业发展规划。</p>
+                    <div class="source-meta">
+                        <div class="source-stats">
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <span class="source-stat-value">892</span>
+                            </div>
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span class="source-stat-value">5小时前</span>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="source-action-btn" title="编辑">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="source-action-btn danger" title="删除" data-delete="2">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="source-card" data-category="official" data-id="3">
+                    <div class="source-card-header">
+                        <div class="source-logo-wrap">
+                            <div class="source-logo official">证</div>
+                            <div class="source-info">
+                                <div class="source-name">证监会披露</div>
+                                <span class="source-category-tag official">官方数据</span>
+                            </div>
+                        </div>
+                        <label class="source-toggle">
+                            <input type="checkbox" checked>
+                            <span class="source-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p class="source-desc">中国证券监督管理委员会官方披露网站，发布上市公司监管信息、IPO数据和并购重组公告。</p>
+                    <div class="source-meta">
+                        <div class="source-stats">
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <span class="source-stat-value">2,341</span>
+                            </div>
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span class="source-stat-value">1小时前</span>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="source-action-btn" title="编辑">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="source-action-btn danger" title="删除" data-delete="3">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Sources -->
+                <div class="source-card" data-category="media" data-id="4">
+                    <div class="source-card-header">
+                        <div class="source-logo-wrap">
+                            <div class="source-logo media">36</div>
+                            <div class="source-info">
+                                <div class="source-name">36Kr</div>
+                                <span class="source-category-tag media">媒体资讯</span>
+                            </div>
+                        </div>
+                        <label class="source-toggle">
+                            <input type="checkbox" checked>
+                            <span class="source-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p class="source-desc">聚焦科技创业投资领域，提供最前沿的科技资讯、融资新闻和行业分析报告。</p>
+                    <div class="source-meta">
+                        <div class="source-stats">
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <span class="source-stat-value">3,892</span>
+                            </div>
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span class="source-stat-value">30分钟前</span>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="source-action-btn" title="编辑">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="source-action-btn danger" title="删除" data-delete="4">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="source-card" data-category="media" data-id="5">
+                    <div class="source-card-header">
+                        <div class="source-logo-wrap">
+                            <div class="source-logo media">虎</div>
+                            <div class="source-info">
+                                <div class="source-name">虎嗅</div>
+                                <span class="source-category-tag media">媒体资讯</span>
+                            </div>
+                        </div>
+                        <label class="source-toggle">
+                            <input type="checkbox" checked>
+                            <span class="source-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p class="source-desc">知名商业科技媒体，深度报道互联网、科技和商业领域的创新动态和人物专访。</p>
+                    <div class="source-meta">
+                        <div class="source-stats">
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <span class="source-stat-value">2,156</span>
+                            </div>
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span class="source-stat-value">1小时前</span>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="source-action-btn" title="编辑">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="source-action-btn danger" title="删除" data-delete="5">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="source-card disabled" data-category="media" data-id="6">
+                    <div class="source-card-header">
+                        <div class="source-logo-wrap">
+                            <div class="source-logo media">机</div>
+                            <div class="source-info">
+                                <div class="source-name">机器之心</div>
+                                <span class="source-category-tag media">媒体资讯</span>
+                            </div>
+                        </div>
+                        <label class="source-toggle">
+                            <input type="checkbox">
+                            <span class="source-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p class="source-desc">人工智能领域垂直科技媒体，专注AI技术、机器学习和深度学习领域的资讯报道。</p>
+                    <div class="source-meta">
+                        <div class="source-stats">
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <span class="source-stat-value">4,521</span>
+                            </div>
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span class="source-stat-value">已暂停</span>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="source-action-btn" title="编辑">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="source-action-btn danger" title="删除" data-delete="6">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Source Card -->
+                <div class="add-source-card" id="addSourceCard">
+                    <div class="add-icon">+</div>
+                    <span class="add-label">添加新订阅源</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Source Modal -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">添加订阅源</h3>
+                <button class="modal-close" id="closeAddModal">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="addSourceForm">
+                <div class="form-group">
+                    <label class="form-label">来源名称</label>
+                    <input type="text" class="form-input" id="sourceName" placeholder="如：财经网" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">来源分类</label>
+                    <select class="form-select" id="sourceCategory" required>
+                        <option value="">请选择分类</option>
+                        <option value="official">官方数据</option>
+                        <option value="media">媒体资讯</option>
+                        <option value="academic">学术研究</option>
+                        <option value="social">社交媒体</option>
+                        <option value="data">数据平台</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">来源 URL</label>
+                    <input type="url" class="form-input" id="sourceUrl" placeholder="https://example.com/rss">
+                    <p class="form-hint">支持 RSS/Atom 订阅地址，或普通网页 URL</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">来源描述</label>
+                    <textarea class="form-textarea" id="sourceDesc" placeholder="简要描述该订阅源的内容定位..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn secondary" id="cancelAdd">取消</button>
+                    <button type="submit" class="modal-btn primary">添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay delete-modal" id="deleteModal">
+        <div class="modal">
+            <div class="delete-modal-content">
+                <div class="delete-icon-wrap">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </div>
+                <h3 class="delete-modal-title">确认删除订阅源</h3>
+                <p class="delete-modal-text">删除后将从采集队列中移除，当前已采集的数据将被保留。是否继续？</p>
+                <div class="delete-modal-actions">
+                    <button class="delete-modal-btn cancel" id="cancelDelete">取消</button>
+                    <button class="delete-modal-btn danger" id="confirmDelete">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Source data
+        const sources = [
+            { id: 1, name: '工信部官网', category: 'official', desc: '工业和信息化部官方政策发布平台...', enabled: true, articles: 1247, lastUpdate: '2小时前' },
+            { id: 2, name: '国家发改委', category: 'official', desc: '国家发展和改革委员会官方网站...', enabled: true, articles: 892, lastUpdate: '5小时前' },
+            { id: 3, name: '证监会披露', category: 'official', desc: '中国证券监督管理委员会官方披露网站...', enabled: true, articles: 2341, lastUpdate: '1小时前' },
+            { id: 4, name: '36Kr', category: 'media', desc: '聚焦科技创业投资领域...', enabled: true, articles: 3892, lastUpdate: '30分钟前' },
+            { id: 5, name: '虎嗅', category: 'media', desc: '知名商业科技媒体...', enabled: true, articles: 2156, lastUpdate: '1小时前' },
+            { id: 6, name: '机器之心', category: 'media', desc: '人工智能领域垂直科技媒体...', enabled: false, articles: 4521, lastUpdate: '已暂停' }
+        ];
+
+        // DOM elements
+        const categoryList = document.getElementById('categoryList');
+        const sourceGrid = document.getElementById('sourceGrid');
+        const currentCategoryName = document.getElementById('currentCategoryName');
+        const sourceBadge = document.getElementById('sourceBadge');
+        const totalCount = document.getElementById('totalCount');
+        const statTotal = document.getElementById('statTotal');
+        const statActive = document.getElementById('statActive');
+        const healthFill = document.getElementById('healthFill');
+        const addModal = document.getElementById('addModal');
+        const deleteModal = document.getElementById('deleteModal');
+        const addSourceForm = document.getElementById('addSourceForm');
+        const addSourceCard = document.getElementById('addSourceCard');
+        const openAddModalBtn = document.getElementById('openAddModal');
+        const closeAddModalBtn = document.getElementById('closeAddModal');
+        const cancelAddBtn = document.getElementById('cancelAdd');
+        const cancelDeleteBtn = document.getElementById('cancelDelete');
+        const confirmDeleteBtn = document.getElementById('confirmDelete');
+
+        let currentCategory = 'all';
+        let deleteTargetId = null;
+        let nextId = 7;
+
+        // Category names
+        const categoryNames = {
+            'all': '全部订阅源',
+            'official': '官方数据',
+            'media': '媒体资讯',
+            'academic': '学术研究',
+            'social': '社交媒体',
+            'data': '数据平台'
+        };
+
+        // Category colors
+        const categoryColors = {
+            'official': 'var(--source-official)',
+            'media': 'var(--source-media)',
+            'academic': 'var(--source-academic)',
+            'social': 'var(--source-social)',
+            'data': 'var(--source-data)'
+        };
+
+        // Render sources
+        function renderSources() {
+            const filtered = currentCategory === 'all'
+                ? sources
+                : sources.filter(s => s.category === currentCategory);
+
+            // Update header
+            currentCategoryName.textContent = categoryNames[currentCategory];
+            sourceBadge.textContent = `${filtered.length} 个来源`;
+            totalCount.textContent = sources.length;
+            statTotal.textContent = sources.length;
+
+            const activeCount = sources.filter(s => s.enabled).length;
+            statActive.textContent = activeCount;
+            healthFill.style.width = `${(activeCount / sources.length) * 100}%`;
+
+            // Build source cards HTML
+            let html = filtered.map(source => `
+                <div class="source-card ${source.enabled ? '' : 'disabled'}" data-category="${source.category}" data-id="${source.id}">
+                    <div class="source-card-header">
+                        <div class="source-logo-wrap">
+                            <div class="source-logo ${source.category}">${source.name.charAt(0)}</div>
+                            <div class="source-info">
+                                <div class="source-name">${source.name}</div>
+                                <span class="source-category-tag ${source.category}">${categoryNames[source.category]}</span>
+                            </div>
+                        </div>
+                        <label class="source-toggle">
+                            <input type="checkbox" ${source.enabled ? 'checked' : ''} data-toggle="${source.id}">
+                            <span class="source-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p class="source-desc">${source.desc}</p>
+                    <div class="source-meta">
+                        <div class="source-stats">
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <span class="source-stat-value">${source.articles.toLocaleString()}</span>
+                            </div>
+                            <div class="source-stat">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span class="source-stat-value">${source.lastUpdate}</span>
+                            </div>
+                        </div>
+                        <div class="source-actions">
+                            <button class="source-action-btn" title="编辑">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="source-action-btn danger" title="删除" data-delete="${source.id}">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add "Add Source" card
+            html += `
+                <div class="add-source-card" id="addSourceCard">
+                    <div class="add-icon">+</div>
+                    <span class="add-label">添加新订阅源</span>
+                </div>
+            `;
+
+            sourceGrid.innerHTML = html;
+
+            // Re-bind events
+            bindSourceEvents();
+        }
+
+        // Bind events for source cards
+        function bindSourceEvents() {
+            // Re-obtain add card reference
+            const newAddCard = document.getElementById('addSourceCard');
+
+            // Toggle switch
+            document.querySelectorAll('[data-toggle]').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const id = parseInt(e.target.dataset.toggle);
+                    const source = sources.find(s => s.id === id);
+                    if (source) {
+                        source.enabled = e.target.checked;
+                        renderSources();
+                    }
+                });
+            });
+
+            // Delete buttons
+            document.querySelectorAll('[data-delete]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteTargetId = parseInt(btn.dataset.delete);
+                    deleteModal.classList.add('visible');
+                });
+            });
+
+            // Add card click
+            newAddCard.addEventListener('click', () => {
+                openAddModal();
+            });
+        }
+
+        // Category selection
+        categoryList.addEventListener('click', (e) => {
+            const item = e.target.closest('.category-item');
+            if (!item) return;
+
+            categoryList.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            currentCategory = item.dataset.category;
+            renderSources();
+        });
+
+        // Modal functions
+        function openAddModal() {
+            addModal.classList.add('visible');
+            document.getElementById('sourceName').focus();
+        }
+
+        function closeAddModal() {
+            addModal.classList.remove('visible');
+            addSourceForm.reset();
+        }
+
+        function closeDeleteModal() {
+            deleteModal.classList.remove('visible');
+            deleteTargetId = null;
+        }
+
+        // Modal events
+        openAddModalBtn.addEventListener('click', openAddModal);
+        closeAddModalBtn.addEventListener('click', closeAddModal);
+        cancelAddBtn.addEventListener('click', closeAddModal);
+        cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+
+        addModal.addEventListener('click', (e) => {
+            if (e.target === addModal) closeAddModal();
+        });
+
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) closeDeleteModal();
+        });
+
+        // Confirm delete
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (deleteTargetId) {
+                const idx = sources.findIndex(s => s.id === deleteTargetId);
+                if (idx > -1) {
+                    sources.splice(idx, 1);
+                }
+                closeDeleteModal();
+                renderSources();
+            }
+        });
+
+        // Add source form
+        addSourceForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('sourceName').value.trim();
+            const category = document.getElementById('sourceCategory').value;
+            const url = document.getElementById('sourceUrl').value.trim();
+            const desc = document.getElementById('sourceDesc').value.trim() || '暂无描述';
+
+            if (!name || !category) {
+                return;
+            }
+
+            const newSource = {
+                id: nextId++,
+                name,
+                category,
+                desc,
+                enabled: true,
+                articles: 0,
+                lastUpdate: '刚刚添加'
+            };
+
+            sources.push(newSource);
+            closeAddModal();
+            renderSources();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAddModal();
+                closeDeleteModal();
+            }
+        });
+
+        // Initial render
+        renderSources();
+    </script>
+</body>
+</html>

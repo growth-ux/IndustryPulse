@@ -1,0 +1,99 @@
+2026-04-29 09:20:46,826 - app.services.scheduler - INFO - Scheduler started with 30 minutes interval
+2026-04-29 09:20:47,556 - app.services.scheduler - INFO - Processed 0 events for keyword: 人工智能
+2026-04-29 09:20:48,204 - app.services.scheduler - INFO - Processed 0 events for keyword: 元宇宙
+2026-04-29 09:20:48,915 - app.services.scheduler - INFO - Processed 0 events for keyword: 医疗健康
+2026-04-29 09:20:49,530 - app.services.scheduler - INFO - Processed 0 events for keyword: 半导体
+2026-04-29 09:20:50,159 - app.services.scheduler - INFO - Processed 0 events for keyword: 新材料
+2026-04-29 09:20:50,802 - app.services.scheduler - INFO - Processed 0 events for keyword: 新能源汽车
+2026-04-29 09:20:51,403 - app.services.scheduler - INFO - Processed 0 events for keyword: 机器人
+2026-04-29 09:20:52,002 - app.services.scheduler - INFO - Processed 0 events for keyword: 生物医药
+2026-04-29 09:24:05,459 - app.services.scheduler - INFO - Scheduler stopped
+2026-04-29 09:24:07,178 - app.services.scheduler - INFO - Scheduler started with 30 minutes interval
+2026-04-29 09:24:09,894 - app.services.scheduler - INFO - Processed 20 events for keyword: 人工智能
+2026-04-29 09:24:12,467 - app.services.scheduler - INFO - Processed 2 events for keyword: 元宇宙
+2026-04-29 09:24:15,067 - app.services.scheduler - INFO - Processed 1 events for keyword: 医疗健康
+2026-04-29 09:24:17,549 - app.services.scheduler - INFO - Processed 19 events for keyword: 半导体
+2026-04-29 09:24:20,013 - app.services.scheduler - INFO - Processed 9 events for keyword: 新材料
+2026-04-29 09:24:22,854 - app.services.scheduler - INFO - Processed 20 events for keyword: 新能源汽车
+2026-04-29 09:24:25,449 - app.services.scheduler - INFO - Processed 20 events for keyword: 机器人
+2026-04-29 09:24:27,969 - app.services.scheduler - INFO - Processed 6 events for keyword: 生物医药
+2026-04-29 09:33:09,687 - app.services.scheduler - INFO - Scheduler stopped
+2026-04-29 09:33:11,254 - app.services.scheduler - INFO - Scheduler started with 30 minutes interval
+2026-04-29 09:33:14,049 - app.services.scheduler - INFO - Processed 20 events for keyword: 人工智能
+2026-04-29 09:33:16,363 - app.services.scheduler - INFO - Processed 2 events for keyword: 元宇宙
+2026-04-29 09:33:18,843 - app.services.scheduler - INFO - Processed 0 events for keyword: 医疗健康
+2026-04-29 09:33:21,084 - app.services.scheduler - INFO - Processed 10 events for keyword: 半导体
+2026-04-29 09:33:23,542 - app.services.scheduler - INFO - Processed 5 events for keyword: 新材料
+2026-04-29 09:33:26,256 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:33:26,256 - app.services.scheduler - INFO - Processed 17 events for keyword: 新能源汽车
+2026-04-29 09:33:28,241 - app.services.scheduler - INFO - Scheduler stopped
+2026-04-29 09:33:29,017 - app.services.scheduler - INFO - Processed 20 events for keyword: 机器人
+2026-04-29 09:33:31,250 - app.services.scheduler - INFO - Processed 1 events for keyword: 生物医药
+2026-04-29 09:33:32,851 - app.services.scheduler - INFO - Scheduler started with 30 minutes interval
+2026-04-29 09:33:35,086 - app.services.scheduler - INFO - Processed 16 events for keyword: 人工智能
+2026-04-29 09:33:37,181 - app.services.scheduler - INFO - Processed 2 events for keyword: 元宇宙
+2026-04-29 09:33:40,091 - app.services.scheduler - INFO - Processed 0 events for keyword: 医疗健康
+2026-04-29 09:33:41,473 - app.services.scheduler - INFO - Scheduler stopped
+2026-04-29 09:33:43,048 - app.services.scheduler - INFO - Processed 10 events for keyword: 半导体
+2026-04-29 09:33:45,437 - app.services.scheduler - INFO - Processed 5 events for keyword: 新材料
+2026-04-29 09:33:47,635 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:33:47,635 - app.services.scheduler - INFO - Processed 17 events for keyword: 新能源汽车
+2026-04-29 09:33:50,231 - app.services.scheduler - INFO - Processed 20 events for keyword: 机器人
+2026-04-29 09:33:52,365 - app.services.scheduler - INFO - Processed 1 events for keyword: 生物医药
+2026-04-29 09:33:54,332 - app.services.scheduler - INFO - Scheduler started with 30 minutes interval
+2026-04-29 09:33:57,527 - app.services.scheduler - INFO - Processed 16 events for keyword: 人工智能
+2026-04-29 09:34:00,263 - app.services.scheduler - INFO - Processed 2 events for keyword: 元宇宙
+2026-04-29 09:34:02,704 - app.services.scheduler - INFO - Processed 0 events for keyword: 医疗健康
+2026-04-29 09:34:04,164 - app.services.scheduler - INFO - Scheduler stopped
+2026-04-29 09:34:05,479 - app.services.scheduler - INFO - Processed 10 events for keyword: 半导体
+2026-04-29 09:34:07,591 - app.services.scheduler - INFO - Processed 5 events for keyword: 新材料
+2026-04-29 09:34:10,002 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:34:10,002 - app.services.scheduler - INFO - Processed 17 events for keyword: 新能源汽车
+2026-04-29 09:34:12,284 - app.services.scheduler - INFO - Processed 20 events for keyword: 机器人
+2026-04-29 09:34:14,670 - app.services.scheduler - INFO - Processed 1 events for keyword: 生物医药
+2026-04-29 09:34:16,382 - app.services.scheduler - INFO - Scheduler started with 30 minutes interval
+2026-04-29 09:34:19,274 - app.services.scheduler - INFO - Processed 16 events for keyword: 人工智能
+2026-04-29 09:34:21,471 - app.services.scheduler - INFO - Processed 2 events for keyword: 元宇宙
+2026-04-29 09:34:23,477 - app.services.scheduler - INFO - Processed 0 events for keyword: 医疗健康
+2026-04-29 09:34:26,073 - app.services.scheduler - INFO - Processed 10 events for keyword: 半导体
+2026-04-29 09:34:28,206 - app.services.scheduler - INFO - Processed 5 events for keyword: 新材料
+2026-04-29 09:34:30,316 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:34:30,317 - app.services.scheduler - INFO - Processed 17 events for keyword: 新能源汽车
+2026-04-29 09:34:32,830 - app.services.scheduler - INFO - Processed 20 events for keyword: 机器人
+2026-04-29 09:34:35,083 - app.services.scheduler - INFO - Processed 1 events for keyword: 生物医药
+2026-04-29 09:45:51,326 - app.services.scheduler - INFO - Scheduler stopped
+2026-04-29 09:45:53,010 - app.services.scheduler - INFO - Scheduler started with 30 minutes interval
+2026-04-29 09:45:56,005 - app.services.scheduler - INFO - Processed 20 events for keyword: 人工智能
+2026-04-29 09:45:58,361 - app.services.scheduler - INFO - Processed 2 events for keyword: 元宇宙
+2026-04-29 09:46:00,274 - app.services.scheduler - INFO - Processed 0 events for keyword: 医疗健康
+2026-04-29 09:46:02,635 - app.services.scheduler - INFO - Processed 11 events for keyword: 半导体
+2026-04-29 09:46:04,908 - app.services.scheduler - INFO - Scheduler stopped
+2026-04-29 09:46:05,096 - app.services.scheduler - INFO - Processed 7 events for keyword: 新材料
+2026-04-29 09:46:07,260 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:46:07,260 - app.services.scheduler - INFO - Processed 17 events for keyword: 新能源汽车
+2026-04-29 09:46:09,642 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:46:09,643 - app.services.scheduler - INFO - Processed 19 events for keyword: 机器人
+2026-04-29 09:46:11,957 - app.services.scheduler - INFO - Processed 1 events for keyword: 生物医药
+2026-04-29 09:46:13,674 - app.services.scheduler - INFO - Scheduler started with 30 minutes interval
+2026-04-29 09:46:15,759 - app.services.scheduler - INFO - Processed 16 events for keyword: 人工智能
+2026-04-29 09:46:17,845 - app.services.scheduler - INFO - Processed 2 events for keyword: 元宇宙
+2026-04-29 09:46:20,126 - app.services.scheduler - INFO - Processed 0 events for keyword: 医疗健康
+2026-04-29 09:46:22,449 - app.services.scheduler - INFO - Processed 11 events for keyword: 半导体
+2026-04-29 09:46:22,512 - app.services.scheduler - INFO - Scheduler stopped
+2026-04-29 09:46:25,158 - app.services.scheduler - INFO - Processed 7 events for keyword: 新材料
+2026-04-29 09:46:29,265 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:46:29,265 - app.services.scheduler - INFO - Processed 17 events for keyword: 新能源汽车
+2026-04-29 09:46:31,590 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:46:31,591 - app.services.scheduler - INFO - Processed 19 events for keyword: 机器人
+2026-04-29 09:46:33,730 - app.services.scheduler - INFO - Processed 1 events for keyword: 生物医药
+2026-04-29 09:46:35,351 - app.services.scheduler - INFO - Scheduler started with 30 minutes interval
+2026-04-29 09:46:38,047 - app.services.scheduler - INFO - Processed 16 events for keyword: 人工智能
+2026-04-29 09:46:40,383 - app.services.scheduler - INFO - Processed 2 events for keyword: 元宇宙
+2026-04-29 09:46:42,601 - app.services.scheduler - INFO - Processed 0 events for keyword: 医疗健康
+2026-04-29 09:46:44,787 - app.services.scheduler - INFO - Processed 11 events for keyword: 半导体
+2026-04-29 09:46:47,158 - app.services.scheduler - INFO - Processed 7 events for keyword: 新材料
+2026-04-29 09:46:49,343 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:46:49,343 - app.services.scheduler - INFO - Processed 17 events for keyword: 新能源汽车
+2026-04-29 09:46:51,420 - app.services.scheduler - ERROR - Error saving event: 1406 (22001): Data too long for column 'id' at row 1
+2026-04-29 09:46:51,420 - app.services.scheduler - INFO - Processed 19 events for keyword: 机器人
+2026-04-29 09:46:53,760 - app.services.scheduler - INFO - Processed 1 events for keyword: 生物医药

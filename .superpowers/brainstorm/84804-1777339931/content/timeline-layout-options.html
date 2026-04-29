@@ -1,0 +1,47 @@
+<h2>时间轴页面布局选择</h2>
+<p class="subtitle">请看哪种更适合复试现场演示：既要直观，也要方便讲清数据来源、分类和 AI 点评。</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:16px;background:#f8fafc;border-radius:12px;height:220px;display:grid;grid-template-rows:auto 1fr;gap:12px">
+        <div style="display:flex;gap:8px"><span style="background:#111827;color:white;padding:6px 12px;border-radius:999px">人工智能</span><span style="background:#e5e7eb;padding:6px 12px;border-radius:999px">近一月</span></div>
+        <div style="border-left:3px solid #2563eb;padding-left:16px;display:grid;gap:10px">
+          <div style="background:white;border-radius:10px;padding:10px;box-shadow:0 1px 4px #0001"><b>04-21 产品发布</b><br><small>某大模型升级多模态能力</small></div>
+          <div style="background:white;border-radius:10px;padding:10px;box-shadow:0 1px 4px #0001"><b>04-15 融资</b><br><small>AI Agent 公司完成 B 轮融资</small></div>
+          <div style="background:white;border-radius:10px;padding:10px;box-shadow:0 1px 4px #0001"><b>04-02 政策</b><br><small>地方发布人工智能产业扶持政策</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 纵向时间轴主视图</h3>
+      <p>最符合题目，事件脉络清晰；适合 MVP 和面试演示。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:16px;background:#f8fafc;border-radius:12px;height:220px;display:grid;grid-template-columns:130px 1fr;gap:12px">
+        <div style="background:white;border-radius:10px;padding:10px;display:grid;gap:8px"><b>分类</b><span>政策 3</span><span>融资 5</span><span>产品 6</span><span>并购 1</span></div>
+        <div style="display:grid;gap:8px"><div style="background:white;border-radius:10px;padding:10px"><b>热点趋势</b><br><small>产品发布集中在下旬</small></div><div style="background:white;border-radius:10px;padding:10px"><b>事件列表</b><br><small>按时间倒序 + AI 点评</small></div></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 分类仪表盘布局</h3>
+      <p>分析感更强，但“时间脉络”不如 A 直观。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:16px;background:#f8fafc;border-radius:12px;height:220px;display:grid;grid-template-columns:1fr 160px;gap:12px">
+        <div style="border-left:3px solid #7c3aed;padding-left:14px;display:grid;gap:8px"><div style="background:white;border-radius:10px;padding:9px"><b>04-21</b> 产品发布<br><small>点评：强化生态竞争</small></div><div style="background:white;border-radius:10px;padding:9px"><b>04-15</b> 融资<br><small>点评：资本继续押注应用层</small></div></div>
+        <div style="background:white;border-radius:10px;padding:10px"><b>洞察面板</b><br><small>热点摘要<br>分类占比<br>抓取来源<br>风险提示</small></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 时间轴 + 右侧洞察</h3>
+      <p>兼顾脉络和分析，展示更完整；实现比 A 略复杂。</p>
+    </div>
+  </div>
+</div>

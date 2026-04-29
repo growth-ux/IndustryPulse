@@ -1,0 +1,37 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Header from './components/Header'
+import SearchPanel from './components/SearchPanel'
+import Sidebar from './components/Sidebar'
+import Timeline from './components/Timeline'
+import SourceManager from './components/SourceManager'
+import { TimelineProvider } from './context/TimelineContext'
+
+function MainLayout() {
+
+  return (
+    <div className="app">
+      <Header />
+      <SearchPanel />
+      <main className="main-container">
+        <Sidebar />
+        <Timeline />
+      </main>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <TimelineProvider>
+        <Routes>
+          <Route path="/" element={<MainLayout />} />
+          <Route path="/sources" element={<SourceManager />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </TimelineProvider>
+    </BrowserRouter>
+  )
+}
+
+export default App

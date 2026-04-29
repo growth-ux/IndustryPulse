@@ -1,0 +1,203 @@
+.timeline-container {
+  position: relative;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.timeline-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timeline-title h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.timeline-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 4px 10px;
+  background: var(--accent-light);
+  color: var(--accent-primary);
+  border-radius: 12px;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 32px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent-primary), var(--accent-light));
+  border-radius: 1px;
+}
+
+.timeline-node {
+  position: relative;
+  padding-bottom: 28px;
+  opacity: 0;
+  transform: translateX(-10px);
+  animation: nodeAppear 400ms ease forwards;
+}
+
+@keyframes nodeAppear {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.timeline-node:nth-child(1) { animation-delay: 0ms; }
+.timeline-node:nth-child(2) { animation-delay: 80ms; }
+.timeline-node:nth-child(3) { animation-delay: 160ms; }
+.timeline-node:nth-child(4) { animation-delay: 240ms; }
+.timeline-node:nth-child(5) { animation-delay: 320ms; }
+.timeline-node:nth-child(6) { animation-delay: 400ms; }
+
+.node-dot {
+  position: absolute;
+  left: -32px;
+  top: 24px;
+  width: 16px;
+  height: 16px;
+  background: var(--bg-secondary);
+  border: 3px solid var(--accent-primary);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.node-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+/* Skeleton loading */
+.skeleton .node-dot {
+  background: var(--bg-tertiary);
+  border-color: var(--bg-tertiary);
+}
+
+.skeleton-card {
+  height: 200px;
+  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 80px 40px;
+}
+
+.empty-illustration {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 24px;
+  background: var(--bg-tertiary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 24px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.empty-text {
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+/* ===== Pagination ===== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.pagination-btn {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+.pagination-info {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 0 12px;
+}
+
+.page-size-select {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.page-size-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}

@@ -1,0 +1,40 @@
+<h2>方案 B：工程化增强架构</h2>
+<p class="subtitle">FastAPI + React + MySQL + Redis + Celery，强调“真实系统设计”和复试展示完整度。</p>
+
+<div class="mockup">
+  <div class="mockup-header">系统组件关系</div>
+  <div class="mockup-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;text-align:center">
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px">
+        <b>React/Vite 前端</b><br>
+        <small>关键词输入、时间范围、时间轴、右侧洞察、手动刷新按钮</small>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px">
+        <b>FastAPI 后端</b><br>
+        <small>查询 API、任务触发 API、分类/点评服务封装</small>
+      </div>
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:16px">
+        <b>MySQL</b><br>
+        <small>事件、来源、抓取任务、分类结果、AI 点评</small>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;text-align:center;margin-top:16px">
+      <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px;padding:16px">
+        <b>Celery Worker</b><br>
+        <small>RSS 抓取、解析、去重、分类、点评、入库</small>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:16px">
+        <b>Redis</b><br>
+        <small>任务队列 Broker / 任务状态</small>
+      </div>
+      <div style="background:#ecfeff;border:1px solid #a5f3fc;border-radius:12px;padding:16px">
+        <b>Celery Beat</b><br>
+        <small>定时预抓取，按 RSS 源周期调度</small>
+      </div>
+    </div>
+    <div style="margin-top:18px;padding:12px;background:#f8fafc;border-radius:12px">
+      <b>查询链路：</b>React → FastAPI → MySQL → 返回时间轴与洞察<br>
+      <b>抓取链路：</b>Celery Beat/手动按钮 → Redis → Celery Worker → RSS → MySQL
+    </div>
+  </div>
+</div>
