@@ -77,3 +77,128 @@ class IndustriesResponse(BaseModel):
 
 class AddIndustryRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=50, description="产业名称")
+
+class SourceCategory(str, Enum):
+    OFFICIAL = "official"
+    MEDIA = "media"
+    ACADEMIC = "academic"
+    SOCIAL = "social"
+    DATA = "data"
+
+class CrawlType(str, Enum):
+    RSS = "rss"
+    HTML = "html"
+
+class Source(BaseModel):
+    id: int
+    name: str
+    category: str
+    url: Optional[str] = None
+    description: Optional[str] = None
+    enabled: bool = True
+    article_count: int = 0
+    last_update: Optional[str] = None
+    crawl_type: CrawlType = CrawlType.RSS
+    list_selector: Optional[str] = None
+    title_selector: Optional[str] = None
+
+class SourcesResponse(BaseModel):
+    success: bool
+    sources: List[Source]
+    total: int
+
+class AddSourceRequest(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100, description="来源名称")
+    category: SourceCategory
+    url: Optional[str] = Field(None, max_length=500, description="来源URL")
+    crawl_type: CrawlType = CrawlType.RSS
+    list_selector: Optional[str] = None
+    title_selector: Optional[str] = None
+    description: Optional[str] = None
+
+class UpdateSourceRequest(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    category: Optional[SourceCategory] = None
+    url: Optional[str] = Field(None, max_length=500)
+    description: Optional[str] = None
+    enabled: Optional[bool] = None
+    crawl_type: Optional[CrawlType] = None
+    list_selector: Optional[str] = None
+    title_selector: Optional[str] = None
+
+class InsightPeriod(str, Enum):
+    SEVEN_DAYS = "7d"
+    THIRTY_DAYS = "30d"
+    NINETY_DAYS = "90d"
+    ONE_YEAR = "1y"
+
+class InsightStats(BaseModel):
+    content_count: int
+    content_count_change: float
+    source_count: int
+    source_count_change: float
+    sentiment_index: float
+    sentiment_change: float
+    heat_index: float
+    heat_rank: int
+
+class InsightStatsResponse(BaseModel):
+    success: bool
+    data: Optional[InsightStats] = None
+
+class DailyTrend(BaseModel):
+    date: str
+    positive: int
+    negative: int
+
+class TrendData(BaseModel):
+    period: str
+    trends: List[DailyTrend]
+
+class TrendResponse(BaseModel):
+    success: bool
+    data: Optional[TrendData] = None
+
+class CategoryDistribution(BaseModel):
+    name: str
+    color: str
+    percentage: float
+    count: int
+
+class DistributionData(BaseModel):
+    positive_rate: float
+    categories: List[CategoryDistribution]
+
+class DistributionResponse(BaseModel):
+    success: bool
+    data: Optional[DistributionData] = None
+
+class TrackComparison(BaseModel):
+    id: str
+    name: str
+    color: str
+    content_count: int
+    heat_index: float
+    trend: float
+
+class ComparisonData(BaseModel):
+    tracks: List[TrackComparison]
+
+class ComparisonResponse(BaseModel):
+    success: bool
+    data: Optional[ComparisonData] = None
+
+class ActivityItem(BaseModel):
+    id: str
+    type: str
+    type_name: str
+    title: str
+    source: str
+    time_ago: str
+
+class ActivitiesData(BaseModel):
+    activities: List[ActivityItem]
+
+class ActivitiesResponse(BaseModel):
+    success: bool
+    data: Optional[ActivitiesData] = None
