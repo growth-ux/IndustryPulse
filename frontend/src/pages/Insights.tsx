@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { getInsightStats, getInsightTrends, getInsightDistribution, getInsightComparison, getInsightActivities, InsightStats, TrendData, DistributionData, TrackComparison, ActivityItem } from '../services/insights'
 
 const TRACKS = [
@@ -27,11 +27,7 @@ export default function Insights() {
   const [activities, setActivities] = useState<ActivityItem[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadData()
-  }, [track, period])
-
-  async function loadData() {
+  const loadData = useCallback(async () => {
     setLoading(true)
     try {
       const [statsRes, trendsRes, distRes, compRes, actsRes] = await Promise.all([
@@ -50,7 +46,11 @@ export default function Insights() {
       console.error('Failed to load insight data', e)
     }
     setLoading(false)
-  }
+  }, [track, period])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
 
   const trackColor = TRACKS.find(t => t.id === track)?.color || '#059669'
 
