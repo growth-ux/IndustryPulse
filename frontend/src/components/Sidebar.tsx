@@ -48,6 +48,9 @@ export default function Sidebar() {
   const allSelected =
     state.typeStats.length > 0 && state.activeFilters.length === state.typeStats.length
 
+  // 当选择"全部"且没有类型统计时，默认全选
+  const shouldSelectAll = state.typeStats.length > 0 && state.activeFilters.length === 0
+
   return (
     <aside className="sidebar">
       <div className="sidebar-section">
@@ -59,7 +62,7 @@ export default function Sidebar() {
         </h3>
         <div className="filter-list">
           <div
-            className={`filter-item ${allSelected ? 'active' : ''}`}
+            className={`filter-item ${shouldSelectAll ? 'active' : ''}`}
             data-type="all"
             onClick={() => handleFilterClick('all')}
           >

@@ -112,14 +112,14 @@
   text-align: center;
 }
 
-.stat-value {
+.stat-item .stat-value {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 28px;
   font-weight: 600;
   color: var(--accent-primary);
 }
 
-.stat-label {
+.stat-item .stat-label {
   font-size: 11px;
   color: var(--text-muted);
   text-transform: uppercase;
