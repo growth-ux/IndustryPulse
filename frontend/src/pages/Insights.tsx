@@ -63,6 +63,11 @@ export default function Insights() {
   }, [])
 
   const trackColor = tracks.find(t => t.name === track)?.color || '#6B7280'
+  const visibleTrends = trendData?.trends.slice(-7) || []
+  const maxTrendCount = Math.max(
+    1,
+    ...visibleTrends.flatMap(t => [t.positive, t.negative])
+  )
 
   return (
     <div className="insights-page">
@@ -168,19 +173,24 @@ export default function Insights() {
                   </div>
                 </div>
                 <div className="bar-chart">
-                  {trendData?.trends.slice(-7).map((t, i) => {
-                    const total = t.positive + t.negative || 1
+                  {visibleTrends.map((t, i) => {
+                    const positiveHeight = (t.positive / maxTrendCount) * 100
+                    const negativeHeight = (t.negative / maxTrendCount) * 100
                     return (
                       <div key={i} className="bar-group">
                         <div className="bar-stack">
                           <div
                             className="bar positive"
-                            style={{ height: `${(t.positive / total) * 100}%`, background: `linear-gradient(180deg, ${trackColor}, ${trackColor}dd)` }}
-                          />
+                            style={{ height: `${positiveHeight}%`, background: `linear-gradient(180deg, ${trackColor}, ${trackColor}dd)` }}
+                          >
+                            <span className="bar-tooltip">正面：{t.positive}篇</span>
+                          </div>
                           <div
                             className="bar negative"
-                            style={{ height: `${(t.negative / total) * 100}%` }}
-                          />
+                            style={{ height: `${negativeHeight}%` }}
+                          >
+                            <span className="bar-tooltip">负面：{t.negative}篇</span>
+                          </div>
                         </div>
                         <span className="bar-label">{t.date}</span>
                       </div>
@@ -273,8 +283,9 @@ export default function Insights() {
                   <h3 className="chart-title">最新动态</h3>
                 </div>
                 <div className="activity-list">
-                  {activities.map(a => (
-                    <div key={a.id} className="activity-item">
+                  {activities.map(a => {
+                    const content = (
+                      <>
                       <div className="activity-icon" style={{ background: `linear-gradient(135deg, ${trackColor}, ${trackColor}dd)` }}>
                         <svg className="icon" viewBox="0 0 24 24">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -288,8 +299,25 @@ export default function Insights() {
                           <span>{a.time_ago}</span>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                      </>
+                    )
+
+                    return a.url ? (
+                      <a
+                        key={a.id}
+                        className="activity-item activity-link"
+                        href={a.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <div key={a.id} className="activity-item">
+                        {content}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </div>

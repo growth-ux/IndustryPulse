@@ -208,6 +208,7 @@ class ActivityItem(BaseModel):
     title: str
     source: str
     time_ago: str
+    url: str = ""
 
 class ActivitiesData(BaseModel):
     activities: List[ActivityItem]

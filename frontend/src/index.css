@@ -473,6 +473,7 @@ body {
   transition: all 300ms ease;
   cursor: pointer;
   position: relative;
+  min-height: 2px;
 }
 
 .bar:hover {
@@ -492,18 +493,31 @@ body {
 
 .bar-tooltip {
   position: absolute;
-  bottom: 100%;
+  bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
   background: var(--text-primary);
   color: #fff;
-  padding: 4px 8px;
+  padding: 6px 9px;
   border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
+  line-height: 1;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
   transition: opacity 200ms ease;
+  z-index: 5;
+}
+
+.bar-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--text-primary);
 }
 
 .bar:hover .bar-tooltip {
@@ -688,11 +702,27 @@ body {
   gap: 12px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
+  color: inherit;
+  text-decoration: none;
 }
 
 .activity-item:last-child {
   border-bottom: none;
   padding-bottom: 0;
+}
+
+.activity-link {
+  cursor: pointer;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.activity-link:hover {
+  color: var(--accent-primary);
+  transform: translateX(2px);
+}
+
+.activity-link:hover .activity-title {
+  color: var(--accent-primary);
 }
 
 .activity-icon {

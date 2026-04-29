@@ -866,7 +866,7 @@ class TimelineProcessor:
         with get_db_cursor() as cursor:
             cursor.execute(
                 """
-                SELECT id, title, source, publish_date, event_type
+                SELECT id, title, source, publish_date, event_type, url
                 FROM events
                 WHERE keyword = %s
                 ORDER BY publish_date DESC, crawled_at DESC
@@ -897,6 +897,7 @@ class TimelineProcessor:
                 "title": row["title"],
                 "source": row["source"] or "未知来源",
                 "time_ago": time_ago,
+                "url": row["url"] or "",
             })
 
         return {

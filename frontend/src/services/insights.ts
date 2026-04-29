@@ -74,6 +74,7 @@ export interface ActivityItem {
   title: string
   source: string
   time_ago: string
+  url: string
 }
 
 export interface ActivitiesData {
