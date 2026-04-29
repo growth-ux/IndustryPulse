@@ -314,7 +314,7 @@ class TimelineProcessor:
         """获取所有产业赛道"""
         with get_db_cursor() as cursor:
             cursor.execute("""
-                SELECT id, name, icon, color_class, is_system, created_at
+                SELECT id, name, icon, color_class, is_system, color, created_at
                 FROM industries
                 ORDER BY is_system DESC, created_at ASC
             """, ())
@@ -343,6 +343,7 @@ class TimelineProcessor:
                 "is_system": row["is_system"],
                 "count": stats["count"],
                 "latest_date": stats["latest_date"].strftime("%Y-%m-%d") if stats["latest_date"] else None,
+                "color": row["color"] or "#6B7280",
             })
 
         return {"success": True, "industries": industries}
@@ -356,8 +357,8 @@ class TimelineProcessor:
 
             cursor.execute(
                 """
-                INSERT INTO industries (id, name, icon, color_class, is_system)
-                VALUES (%s, %s, '📡', 'industry-custom', FALSE)
+                INSERT INTO industries (id, name, icon, color_class, is_system, color)
+                VALUES (%s, %s, '📡', 'industry-custom', FALSE, '#6B7280')
                 """,
                 (name, name),
             )
