@@ -4,6 +4,7 @@ import SearchPanel from './components/SearchPanel'
 import Sidebar from './components/Sidebar'
 import Timeline from './components/Timeline'
 import SourceManager from './components/SourceManager'
+import Favorites from './components/Favorites'
 import Insights from './pages/Insights'
 import { TimelineProvider } from './context/TimelineContext'
 
@@ -29,6 +30,15 @@ function SourceLayout() {
   )
 }
 
+function FavoritesLayout() {
+  return (
+    <div className="app">
+      <Header />
+      <Favorites />
+    </div>
+  )
+}
+
 function InsightsLayout() {
   return (
     <div className="app">
@@ -45,6 +55,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />} />
           <Route path="/sources" element={<SourceLayout />} />
+          <Route path="/favorites" element={<FavoritesLayout />} />
           <Route path="/insights" element={<InsightsLayout />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

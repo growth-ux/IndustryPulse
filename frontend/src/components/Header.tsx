@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import GlobalSearch from './GlobalSearch'
 import './Header.css'
 
 export default function Header() {
   const location = useLocation()
+  const [searchOpen, setSearchOpen] = useState(false)
 
   return (
     <header className="header">
@@ -14,6 +17,13 @@ export default function Header() {
         </div>
         <span className="logo-text">IndustryPulse</span>
       </Link>
+      <button className="global-search-btn" onClick={() => setSearchOpen(true)}>
+        <svg className="icon" viewBox="0 0 24 24" style={{ width: 18, height: 18 }}>
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span className="search-btn-text">搜索</span>
+      </button>
       <nav className="nav-links">
         <Link
           to="/"
@@ -48,7 +58,21 @@ export default function Header() {
           </svg>
           数据洞察
         </Link>
+        <Link
+          to="/favorites"
+          className={`nav-link ${location.pathname === '/favorites' ? 'active' : ''}`}
+        >
+          <svg className="icon" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+          </svg>
+          我的收藏
+        </Link>
       </nav>
+      <div className="user-menu">
+        <div className="user-avatar">W</div>
+        <span className="user-name">weiyu</span>
+      </div>
+      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   )
 }

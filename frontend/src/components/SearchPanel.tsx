@@ -96,6 +96,7 @@ export default function SearchPanel() {
     }
   }
 
+  
   const handleAddIndustry = async () => {
     const name = newIndustryName.trim()
     if (!name) return
@@ -266,7 +267,8 @@ export default function SearchPanel() {
                 ))}
               </div>
             </div>
-          </div>
+
+                      </div>
         </div>
       </div>
     </section>

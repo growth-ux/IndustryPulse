@@ -19,9 +19,18 @@ class EventType(str, Enum):
     PERSON = "person"
     OTHER = "other"
 
+class SearchType(str, Enum):
+    ALL = "all"
+    INDUSTRY = "industry"
+    SOURCE = "source"
+    PERSON = "person"
+
 class TimelineRequest(BaseModel):
     keyword: str = Field(..., min_length=1, max_length=100, description="搜索关键词")
     time_range: TimeRange = Field(default=TimeRange.MONTH, description="时间范围")
+    search_type: SearchType = Field(default=SearchType.ALL, description="搜索类型")
+    page: int = Field(default=1, ge=1, description="页码")
+    page_size: int = Field(default=20, ge=1, le=100, description="每页条数")
 
 class EventResponse(BaseModel):
     id: str
@@ -39,6 +48,9 @@ class TimelineData(BaseModel):
     keyword: str
     time_range: str
     total_count: int
+    page: int = 1
+    page_size: int = 20
+    total_pages: int = 1
     events: List[EventResponse]
 
 class TimelineResponse(BaseModel):

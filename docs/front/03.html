@@ -36,6 +36,8 @@
             --border: #E5E7EB;
             --shadow: rgba(0, 0, 0, 0.06);
             --shadow-hover: rgba(0, 0, 0, 0.12);
+            --favorite: #F59E0B;
+            --favorite-light: #FEF3C7;
         }
 
         html {
@@ -60,10 +62,22 @@
             justify-content: space-between;
         }
 
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
+            text-decoration: none;
         }
 
         .logo-icon {
@@ -85,12 +99,110 @@
             letter-spacing: -0.5px;
         }
 
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 200ms ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-link.active {
+            color: var(--accent-primary);
+            background: var(--accent-light);
+            font-weight: 600;
+        }
+
+        .nav-link .icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* User Menu */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px 6px 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .user-menu:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
         .tagline {
             font-size: 14px;
             color: var(--text-muted);
             margin-left: 16px;
             padding-left: 16px;
             border-left: 1px solid var(--border);
+        }
+
+        /* Global Search Button */
+        .search-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 200ms ease;
+            margin-left: 20px;
+        }
+
+        .search-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
+        }
+
+        .search-btn .icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .search-btn-text {
+            font-size: 13px;
+            font-weight: 500;
         }
 
         /* ===== Hero Input Area ===== */
@@ -1012,6 +1124,40 @@
             color: var(--accent-hover);
         }
 
+        /* Event Favorite */
+        .event-favorite {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--favorite-light);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--favorite);
+            transition: all 200ms ease;
+        }
+
+        .event-favorite:hover {
+            transform: scale(1.1);
+        }
+
+        .event-favorite.favorited {
+            background: var(--favorite);
+            color: #fff;
+        }
+
+        .event-favorite .icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            stroke: none;
+        }
+
         /* ===== Pagination ===== */
         .pagination {
             display: flex;
@@ -1162,6 +1308,14 @@
                 padding: 16px 20px;
             }
 
+            .search-btn-text {
+                display: none;
+            }
+
+            .search-btn {
+                padding: 8px;
+            }
+
             .tagline {
                 display: none;
             }
@@ -1221,15 +1375,61 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="logo">
-            <div class="logo-icon">
-                <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        <div class="header-left">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                </div>
+                <span class="logo-text">IndustryPulse</span>
+            </a>
+            <button class="search-btn" id="globalSearchBtn" title="全局搜索">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-            </div>
-            <span class="logo-text">IndustryPulse</span>
+                <span class="search-btn-text">搜索</span>
+            </button>
         </div>
-        <span class="tagline">产业热点 · 时间脉络 · AI洞察</span>
+        <div class="header-right">
+            <nav class="nav-links">
+                <a href="#" class="nav-link active">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    产业赛道
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M4 11a9 9 0 0 1 9 9"></path>
+                        <path d="M4 4a16 16 0 0 1 16 16"></path>
+                        <circle cx="5" cy="19" r="1"></circle>
+                    </svg>
+                    订阅源管理
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    数据洞察
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    我的收藏
+                </a>
+            </nav>
+            <div class="user-menu">
+                <div class="user-avatar">W</div>
+                <span class="user-name">weiyu</span>
+            </div>
+        </div>
     </header>
 
     <!-- Hero Input -->
@@ -2100,6 +2300,11 @@
                     <div class="node-dot"></div>
                     <div class="node-date">${item.date}</div>
                     <div class="event-card">
+                        <button class="event-favorite" title="收藏">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </button>
                         <div class="event-source">
                             <span class="source-logo">${sourceLogos[item.source] || item.source.slice(0, 2)}</span>
                             <span class="source-name">${item.source}</span>
@@ -2238,6 +2443,22 @@
             </div>
         `;
         document.body.appendChild(contextMenu);
+
+        // Favorite toggle handler
+        timeline.addEventListener('click', (e) => {
+            const favoriteBtn = e.target.closest('.event-favorite');
+            if (favoriteBtn) {
+                favoriteBtn.classList.toggle('favorited');
+                const isFavorited = favoriteBtn.classList.contains('favorited');
+                favoriteBtn.title = isFavorited ? '已收藏' : '收藏';
+            }
+        });
+
+        // Global search button
+        document.getElementById('globalSearchBtn').addEventListener('click', () => {
+            // In production, this would open a global search modal
+            alert('全局搜索功能开发中...');
+        });
 
         let contextTargetCard = null;
 

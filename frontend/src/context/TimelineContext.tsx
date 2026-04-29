@@ -15,6 +15,7 @@ const initialState: TimelineState = {
   page: 1,
   pageSize: 10,
   total: 0,
+  favoritedEventIds: [],
 }
 
 function timelineReducer(state: TimelineState, action: TimelineAction): TimelineState {
@@ -54,6 +55,12 @@ function timelineReducer(state: TimelineState, action: TimelineAction): Timeline
       return { ...state, pageSize: action.payload, page: 1 }
     case 'SET_TOTAL':
       return { ...state, total: action.payload }
+    case 'SET_FAVORITED_EVENT_IDS':
+      return { ...state, favoritedEventIds: action.payload }
+    case 'ADD_FAVORITED_EVENT_ID':
+      return { ...state, favoritedEventIds: [...state.favoritedEventIds, action.payload] }
+    case 'REMOVE_FAVORITED_EVENT_ID':
+      return { ...state, favoritedEventIds: state.favoritedEventIds.filter(id => id !== action.payload) }
     case 'RESET':
       return { ...initialState }
     default:
@@ -79,6 +86,9 @@ interface TimelineContextType {
   setPage: (page: number) => void
   setPageSize: (size: number) => void
   setTotal: (total: number) => void
+  setFavoritedEventIds: (ids: string[]) => void
+  addFavoritedEventId: (id: string) => void
+  removeFavoritedEventId: (id: string) => void
 }
 
 const TimelineContext = createContext<TimelineContextType | null>(null)
@@ -104,6 +114,9 @@ export function TimelineProvider({ children }: { children: ReactNode }) {
     setPage: (page) => dispatch({ type: 'SET_PAGE', payload: page }),
     setPageSize: (size) => dispatch({ type: 'SET_PAGE_SIZE', payload: size }),
     setTotal: (total) => dispatch({ type: 'SET_TOTAL', payload: total }),
+    setFavoritedEventIds: (ids) => dispatch({ type: 'SET_FAVORITED_EVENT_IDS', payload: ids }),
+    addFavoritedEventId: (id) => dispatch({ type: 'ADD_FAVORITED_EVENT_ID', payload: id }),
+    removeFavoritedEventId: (id) => dispatch({ type: 'REMOVE_FAVORITED_EVENT_ID', payload: id }),
   }
 
   return <TimelineContext.Provider value={value}>{children}</TimelineContext.Provider>

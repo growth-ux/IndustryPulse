@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全局搜索 — IndustryPulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F8F9FB;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF1F5;
+            --text-primary: #111827;
+            --text-secondary: #4B5563;
+            --text-muted: #9CA3AF;
+            --accent-primary: #0F766E;
+            --accent-hover: #0D5D56;
+            --accent-light: #CCFBF1;
+            --accent-secondary: #7C3AED;
+            --accent-secondary-light: #EDE9FE;
+            --type-policy: #DC2626;
+            --type-funding: #059669;
+            --type-product: #2563EB;
+            --type-ma: #D97706;
+            --type-tech: #7C3AED;
+            --type-report: #0891B2;
+            --type-person: #DB2777;
+            --border: #E5E7EB;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --shadow-hover: rgba(0, 0, 0, 0.12);
+            --favorite: #F59E0B;
+            --favorite-light: #FEF3C7;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== Search Overlay ===== */
+        .search-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 80px 24px 40px;
+            animation: overlayFadeIn 200ms ease;
+        }
+
+        @keyframes overlayFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .search-overlay.closing {
+            animation: overlayFadeOut 150ms ease forwards;
+        }
+
+        @keyframes overlayFadeOut {
+            to { opacity: 0; }
+        }
+
+        /* ===== Search Modal ===== */
+        .search-modal {
+            width: 100%;
+            max-width: 720px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--border);
+            overflow: hidden;
+            animation: modalSlideIn 250ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ===== Search Header ===== */
+        .search-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            font-family: inherit;
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--text-primary);
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-shortcut {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .search-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        .search-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .search-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* ===== Search Filters ===== */
+        .search-filters {
+            display: flex;
+            gap: 8px;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .search-filter {
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 150ms ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-filter:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .search-filter.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #fff;
+        }
+
+        .search-filter .icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ===== Search Content ===== */
+        .search-content {
+            max-height: 480px;
+            overflow-y: auto;
+        }
+
+        /* Recent Searches */
+        .search-section {
+            padding: 20px 24px;
+        }
+
+        .search-section-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .clear-history {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .clear-history:hover {
+            color: var(--type-policy);
+        }
+
+        .recent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        .recent-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .recent-item .icon {
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+        }
+
+        .recent-item span {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* Search Results */
+        .search-results {
+            padding: 0;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 24px;
+            cursor: pointer;
+            transition: all 150ms ease;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item:hover {
+            background: var(--bg-primary);
+        }
+
+        .result-type-indicator {
+            width: 4px;
+            height: 40px;
+            border-radius: 2px;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .result-type-indicator.policy { background: var(--type-policy); }
+        .result-type-indicator.funding { background: var(--type-funding); }
+        .result-type-indicator.product { background: var(--type-product); }
+        .result-type-indicator.ma { background: var(--type-ma); }
+        .result-type-indicator.tech { background: var(--type-tech); }
+        .result-type-indicator.report { background: var(--type-report); }
+        .result-type-indicator.person { background: var(--type-person); }
+        .result-type-indicator.industry { background: var(--accent-primary); }
+        .result-type-indicator.source { background: var(--accent-secondary); }
+
+        .result-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .result-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .result-title .highlight {
+            background: var(--favorite-light);
+            color: var(--favorite);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .result-item:hover .result-title {
+            color: var(--accent-primary);
+        }
+
+        .result-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-source {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+        }
+
+        .result-summary {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .result-summary .highlight {
+            background: var(--favorite-light);
+            color: var(--favorite);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .result-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .result-tag {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .result-tag.policy { background: var(--type-policy); }
+        .result-tag.funding { background: var(--type-funding); }
+        .result-tag.product { background: var(--type-product); }
+        .result-tag.ma { background: var(--type-ma); }
+        .result-tag.tech { background: var(--type-tech); }
+        .result-tag.report { background: var(--type-report); }
+        .result-tag.person { background: var(--type-person); }
+        .result-tag.industry { background: var(--accent-primary); }
+
+        .result-arrow {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            margin-top: 12px;
+            opacity: 0;
+            transform: translateX(-4px);
+            transition: all 150ms ease;
+        }
+
+        .result-item:hover .result-arrow {
+            opacity: 1;
+            transform: translateX(0);
+            color: var(--accent-primary);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-primary);
+        }
+
+        .quick-actions-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .quick-actions-grid {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 150ms ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quick-action:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            background: var(--accent-light);
+        }
+
+        .quick-action .icon {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Empty State */
+        .search-empty {
+            padding: 60px 24px;
+            text-align: center;
+        }
+
+        .search-empty-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .search-empty-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .search-empty h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .search-empty p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Loading State */
+        .search-loading {
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        .search-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 600ms linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .search-loading p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Keyboard Navigation Hint */
+        .keyboard-hints {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-primary);
+        }
+
+        .keyboard-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .keyboard-hint kbd {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            padding: 3px 6px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-shadow: 0 1px 0 var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .search-overlay {
+                padding: 20px 16px;
+            }
+
+            .search-header {
+                padding: 16px;
+            }
+
+            .search-filters {
+                padding: 12px 16px;
+            }
+
+            .search-section {
+                padding: 16px;
+            }
+
+            .result-item {
+                padding: 14px 16px;
+            }
+
+            .keyboard-hints {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-modal">
+            <!-- Search Header -->
+            <div class="search-header">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索事件、赛道、来源..." autofocus>
+                <span class="search-shortcut">ESC</span>
+                <button class="search-close" id="closeSearch" title="关闭">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Search Filters -->
+            <div class="search-filters">
+                <button class="search-filter active" data-filter="all">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    全部
+                </button>
+                <button class="search-filter" data-filter="event">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    事件
+                </button>
+                <button class="search-filter" data-filter="industry">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    </svg>
+                    赛道
+                </button>
+                <button class="search-filter" data-filter="source">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 11a9 9 0 0 1 9 9"></path>
+                        <path d="M4 4a16 16 0 0 1 16 16"></path>
+                        <circle cx="5" cy="19" r="1"></circle>
+                    </svg>
+                    来源
+                </button>
+                <button class="search-filter" data-filter="person">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    人物
+                </button>
+            </div>
+
+            <!-- Search Content -->
+            <div class="search-content" id="searchContent">
+                <!-- Recent Searches -->
+                <div class="search-section" id="recentSection">
+                    <div class="search-section-title">
+                        <span>最近搜索</span>
+                        <button class="clear-history" id="clearHistory">清除</button>
+                    </div>
+                    <div class="recent-list" id="recentList">
+                        <div class="recent-item" data-query="人工智能 GPT-5">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>人工智能 GPT-5</span>
+                        </div>
+                        <div class="recent-item" data-query="新能源汽车 融资">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>新能源汽车 融资</span>
+                        </div>
+                        <div class="recent-item" data-query="半导体 政策">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>半导体 政策</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="quick-actions-title">快捷操作</div>
+                    <div class="quick-actions-grid">
+                        <button class="quick-action" data-action="today">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            今日热点
+                        </button>
+                        <button class="quick-action" data-action="favorites">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            我的收藏
+                        </button>
+                        <button class="quick-action" data-action="industries">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            </svg>
+                            所有赛道
+                        </button>
+                        <button class="quick-action" data-action="export">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            导出数据
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keyboard Hints -->
+            <div class="keyboard-hints">
+                <div class="keyboard-hint">
+                    <kbd>↑</kbd><kbd>↓</kbd>
+                    <span>选择</span>
+                </div>
+                <div class="keyboard-hint">
+                    <kbd>Enter</kbd>
+                    <span>确认</span>
+                </div>
+                <div class="keyboard-hint">
+                    <kbd>ESC</kbd>
+                    <span>关闭</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        const closeBtn = document.getElementById('closeSearch');
+        const searchContent = document.getElementById('searchContent');
+        const recentSection = document.getElementById('recentSection');
+        const recentList = document.getElementById('recentList');
+        const clearHistory = document.getElementById('clearHistory');
+        const filterBtns = document.querySelectorAll('.search-filter');
+        const quickActions = document.querySelectorAll('.quick-action');
+        const recentItems = document.querySelectorAll('.recent-item');
+
+        // Mock search results data
+        const mockResults = [
+            {
+                type: 'event',
+                typeClass: 'product',
+                title: 'OpenAI发布GPT-5，性能超越现有所有大模型',
+                source: '机器之心',
+                date: '2024-03-15',
+                summary: 'OpenAI在今日凌晨发布了最新一代大语言模型GPT-5，在多项基准测试中刷新纪录，展现出接近通用人工智能的能力。',
+                tags: ['产品发布', '人工智能']
+            },
+            {
+                type: 'event',
+                typeClass: 'policy',
+                title: '工信部发布人工智能产业发展三年行动计划',
+                source: '36Kr',
+                date: '2024-03-14',
+                summary: '工业和信息化部正式发布《人工智能产业发展三年行动计划（2024-2026年）》，明确提出到2026年要实现人工智能核心产业规模超过1万亿元。',
+                tags: ['政策', '人工智能']
+            },
+            {
+                type: 'industry',
+                typeClass: 'industry',
+                title: '人工智能',
+                source: null,
+                date: null,
+                summary: '1284 条事件，涵盖大模型、应用落地、技术突破等领域',
+                tags: []
+            },
+            {
+                type: 'event',
+                typeClass: 'funding',
+                title: '某智能驾驶公司完成45亿元D轮融资',
+                source: '虎嗅',
+                date: '2024-03-13',
+                summary: '国内知名智能驾驶解决方案提供商纵目科技宣布完成D轮融资，融资金额达45亿元。',
+                tags: ['融资', '新能源汽车']
+            },
+            {
+                type: 'source',
+                typeClass: 'source',
+                title: '机器之心',
+                source: null,
+                date: null,
+                summary: '已订阅 · 156 篇相关事件',
+                tags: []
+            }
+        ];
+
+        // Search state
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        // Focus input on open
+        searchOverlay.addEventListener('transitionend', () => {
+            if (!searchOverlay.classList.contains('closing')) {
+                searchInput.focus();
+            }
+        });
+
+        // Close search
+        function closeSearch() {
+            searchOverlay.classList.add('closing');
+            setTimeout(() => {
+                window.close();
+            }, 150);
+        }
+
+        closeBtn.addEventListener('click', closeSearch);
+        searchOverlay.addEventListener('click', (e) => {
+            if (e.target === searchOverlay) {
+                closeSearch();
+            }
+        });
+
+        // ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSearch();
+            }
+        });
+
+        // Filter buttons
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                performSearch(searchQuery);
+            });
+        });
+
+        // Recent items click
+        recentItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const query = item.dataset.query;
+                searchInput.value = query;
+                performSearch(query);
+            });
+        });
+
+        // Quick actions
+        quickActions.forEach(action => {
+            action.addEventListener('click', () => {
+                const actionType = action.dataset.action;
+                alert(`快捷操作: ${actionType}`);
+            });
+        });
+
+        // Clear history
+        clearHistory.addEventListener('click', () => {
+            recentList.innerHTML = '';
+        });
+
+        // Perform search
+        function performSearch(query) {
+            searchQuery = query;
+
+            if (!query || query.length < 2) {
+                renderRecentSearches();
+                return;
+            }
+
+            // Show loading
+            searchContent.innerHTML = `
+                <div class="search-loading">
+                    <div class="search-spinner"></div>
+                    <p>搜索中...</p>
+                </div>
+            `;
+
+            // Simulate search delay
+            setTimeout(() => {
+                const results = mockResults.filter(r => {
+                    if (currentFilter !== 'all' && r.type !== currentFilter) return false;
+                    const q = query.toLowerCase();
+                    return r.title.toLowerCase().includes(q) ||
+                           (r.summary && r.summary.toLowerCase().includes(q));
+                });
+
+                renderResults(results, query);
+            }, 300);
+        }
+
+        // Render results
+        function renderResults(results, query) {
+            if (results.length === 0) {
+                searchContent.innerHTML = `
+                    <div class="search-empty">
+                        <div class="search-empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </div>
+                        <h3>未找到相关结果</h3>
+                        <p>尝试使用其他关键词搜索</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const highlightText = (text, query) => {
+                if (!query) return text;
+                const regex = new RegExp(`(${query})`, 'gi');
+                return text.replace(regex, '<span class="highlight">$1</span>');
+            };
+
+            searchContent.innerHTML = `
+                <div class="search-results">
+                    ${results.map(r => `
+                        <div class="result-item" data-type="${r.type}">
+                            <div class="result-type-indicator ${r.typeClass}"></div>
+                            <div class="result-content">
+                                <div class="result-title">${highlightText(r.title, query)}</div>
+                                <div class="result-meta">
+                                    ${r.source ? `<span class="result-source">${r.source}</span><span>·</span>` : ''}
+                                    <span>${r.date || r.type}</span>
+                                </div>
+                                <div class="result-summary">${highlightText(r.summary, query)}</div>
+                                ${r.tags.length > 0 ? `
+                                    <div class="result-tags">
+                                        ${r.tags.map(t => `<span class="result-tag ${currentFilter === 'event' && t === '产品发布' ? 'product' : ''}">${t}</span>`).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <svg class="result-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            // Add click handlers to result items
+            document.querySelectorAll('.result-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const type = item.dataset.type;
+                    alert(`跳转到: ${type} 详情页`);
+                });
+            });
+        }
+
+        // Render recent searches
+        function renderRecentSearches() {
+            searchContent.innerHTML = `
+                <div class="search-section">
+                    <div class="search-section-title">
+                        <span>最近搜索</span>
+                        <button class="clear-history" id="clearHistory">清除</button>
+                    </div>
+                    <div class="recent-list">
+                        <div class="recent-item" data-query="人工智能 GPT-5">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>人工智能 GPT-5</span>
+                        </div>
+                        <div class="recent-item" data-query="新能源汽车 融资">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>新能源汽车 融资</span>
+                        </div>
+                        <div class="recent-item" data-query="半导体 政策">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>半导体 政策</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <div class="quick-actions-title">快捷操作</div>
+                    <div class="quick-actions-grid">
+                        <button class="quick-action" data-action="today">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            今日热点
+                        </button>
+                        <button class="quick-action" data-action="favorites">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            我的收藏
+                        </button>
+                        <button class="quick-action" data-action="industries">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            </svg>
+                            所有赛道
+                        </button>
+                        <button class="quick-action" data-action="export">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            导出数据
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Rebind event listeners
+            document.querySelectorAll('.recent-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const query = item.dataset.query;
+                    searchInput.value = query;
+                    performSearch(query);
+                });
+            });
+
+            document.querySelectorAll('.quick-action').forEach(action => {
+                action.addEventListener('click', () => {
+                    const actionType = action.dataset.action;
+                    alert(`快捷操作: ${actionType}`);
+                });
+            });
+
+            document.getElementById('clearHistory').addEventListener('click', () => {
+                document.querySelector('.recent-list').innerHTML = '';
+            });
+        }
+
+        // Input handler with debounce
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch(e.target.value);
+            }, 200);
+        });
+
+        // Keyboard navigation
+        let selectedIndex = -1;
+        document.addEventListener('keydown', (e) => {
+            const items = document.querySelectorAll('.result-item, .recent-item');
+            if (items.length === 0) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                updateSelection(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, 0);
+                updateSelection(items);
+            } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                e.preventDefault();
+                items[selectedIndex].click();
+            }
+        });
+
+        function updateSelection(items) {
+            items.forEach((item, i) => {
+                item.style.background = i === selectedIndex ? 'var(--bg-tertiary)' : '';
+            });
+            items[selectedIndex]?.scrollIntoView({ block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

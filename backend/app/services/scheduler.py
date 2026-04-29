@@ -4,7 +4,6 @@ import logging.handlers
 import random
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
-from app.services.crawler import crawler
 from app.services.ai import ai_service
 from app.database import get_db_cursor
 
@@ -31,7 +30,7 @@ class PeriodicCrawler:
     """定时爬取任务执行器"""
 
     def run(self):
-        """执行一次完整的爬取流程（在新线程的event loop中运行）"""
+        """执行一次完整的爬取流程"""
         def _run_in_thread():
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
@@ -46,10 +45,12 @@ class PeriodicCrawler:
         t.join()
 
     async def _run_async(self):
-        """异步执行爬取"""
         keywords = self._get_keywords()
+        sources = self._get_sources()  # 新增：从数据库读
+
         for keyword in keywords:
-            await self._crawl_keyword(keyword)
+            for source in sources:
+                await self._crawl_keyword_source(keyword, source)
 
     def _get_keywords(self):
         """从数据库获取所有关键词"""
@@ -58,9 +59,35 @@ class PeriodicCrawler:
             rows = cursor.fetchall()
         return [row["name"] for row in rows]
 
-    async def _crawl_keyword(self, keyword: str):
-        """爬取单个关键词"""
+    def _get_sources(self):
+        """从数据库获取所有启用的订阅源"""
+        with get_db_cursor() as cursor:
+            cursor.execute("SELECT * FROM sources WHERE enabled = TRUE")
+            rows = cursor.fetchall()
+
+        from app.models.schema import Source, CrawlType
+        sources = []
+        for row in rows:
+            sources.append(Source(
+                id=row['id'],
+                name=row['name'],
+                category=row['category'],
+                url=row.get('url'),
+                description=row.get('description'),
+                enabled=bool(row['enabled']),
+                article_count=row.get('article_count', 0),
+                last_update=row.get('last_update').isoformat() if row.get('last_update') else None,
+                crawl_type=CrawlType(row.get('crawl_type', 'rss')),
+                list_selector=row.get('list_selector'),
+                title_selector=row.get('title_selector'),
+            ))
+        return sources
+
+    async def _crawl_keyword_source(self, keyword: str, source):
+        """爬取单个关键词+订阅源组合"""
         try:
+            from app.services.crawlers import CrawlerFactory
+            crawler = CrawlerFactory.create(source)
             events = await crawler.crawl(keyword, "month")
             events = events[:MAX_EVENTS_PER_RUN]
 
@@ -77,9 +104,9 @@ class PeriodicCrawler:
                     self._save_event(event, keyword)
 
             await asyncio.gather(*[process_event(e) for e in events])
-            logger.info(f"Processed {len(events)} events for keyword: {keyword}")
+            logger.info(f"Processed {len(events)} events for {keyword} from {source.name}")
         except Exception as e:
-            logger.error(f"Error crawling keyword {keyword}: {e}")
+            logger.error(f"Error crawling {keyword}/{source.name}: {e}")
 
     def _save_event(self, event, keyword: str):
         """保存事件到数据库"""

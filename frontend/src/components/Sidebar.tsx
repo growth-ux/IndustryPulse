@@ -17,17 +17,19 @@ export default function Sidebar() {
   const { state, toggleFilter, setActiveFilters } = useTimeline()
 
   useEffect(() => {
-    if (state.typeStats.length > 0 && state.activeFilters.length === 0) {
+    if (state.typeStats.length > 0 && state.selectedIndustry) {
       setActiveFilters(state.typeStats.map((t) => t.type))
     }
-  }, [state.typeStats])
+  }, [state.typeStats, state.selectedIndustry])
 
   const sortedTypeStats = [...state.typeStats].sort((a, b) => b.count - a.count)
 
   const handleFilterClick = (type: string) => {
     if (type === 'all') {
-      // 点击"全部"则选中所有类型
-      setActiveFilters(sortedTypeStats.map((t) => t.type))
+      const allTypes = state.typeStats.map((t) => t.type)
+      if (allTypes.length > 0) {
+        setActiveFilters(allTypes)
+      }
     } else {
       toggleFilter(type)
     }
@@ -43,11 +45,8 @@ export default function Sidebar() {
   const totalCount = state.typeStats.reduce((sum, t) => sum + t.count, 0)
   const sourceCount = new Set(state.events.map((e) => e.source)).size
 
-  const allSelected =
+  const shouldSelectAll =
     state.typeStats.length > 0 && state.activeFilters.length === state.typeStats.length
-
-  // 当选择"全部"且没有类型统计时，默认全选
-  const shouldSelectAll = state.typeStats.length > 0 && state.activeFilters.length === 0
 
   return (
     <aside className="sidebar">

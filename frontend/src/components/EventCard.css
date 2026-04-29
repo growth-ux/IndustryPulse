@@ -143,6 +143,44 @@
   color: var(--accent-hover);
 }
 
+.event-favorite {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--favorite-light);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--favorite);
+  transition: all 200ms ease;
+}
+
+.event-favorite:hover {
+  transform: scale(1.1);
+}
+
+.event-favorite.favorited {
+  background: var(--favorite);
+  color: #fff;
+}
+
+.event-favorite .icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  stroke: none;
+}
+
+.event-favorite:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .icon-xs {
   width: 12px;
   height: 12px;

@@ -19,6 +19,9 @@ export interface TimelineData {
   keyword: string
   time_range: string
   total_count: number
+  page: number
+  page_size: number
+  total_pages: number
   events: TimelineEvent[]
 }
 
@@ -74,6 +77,8 @@ export interface TimelineState {
   page: number
   pageSize: number
   total: number
+  // favorites
+  favoritedEventIds: string[]
 }
 
 export type TimelineAction =
@@ -92,4 +97,7 @@ export type TimelineAction =
   | { type: 'SET_PAGE'; payload: number }
   | { type: 'SET_PAGE_SIZE'; payload: number }
   | { type: 'SET_TOTAL'; payload: number }
+  | { type: 'SET_FAVORITED_EVENT_IDS'; payload: string[] }
+  | { type: 'ADD_FAVORITED_EVENT_ID'; payload: string }
+  | { type: 'REMOVE_FAVORITED_EVENT_ID'; payload: string }
   | { type: 'RESET' }

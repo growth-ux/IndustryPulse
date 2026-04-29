@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { useTimeline } from '../context/TimelineContext'
 import EventCard from './EventCard'
+import { getFavorites } from '../services/api'
 import './Timeline.css'
 
 const TIME_RANGE_TEXT: Record<string, string> = {
@@ -13,7 +15,15 @@ const TIME_RANGE_TEXT: Record<string, string> = {
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50]
 
 export default function Timeline() {
-  const { state, setPage, setPageSize } = useTimeline()
+  const { state, setPage, setPageSize, setFavoritedEventIds } = useTimeline()
+
+  useEffect(() => {
+    getFavorites().then(res => {
+      if (res.success) {
+        setFavoritedEventIds(res.favorites.map(f => f.event_id))
+      }
+    })
+  }, [])
 
   const filteredEvents = state.events.filter((event) => state.activeFilters.includes(event.type))
   const displayEvents = state.activeFilters.length === 0 ? state.events : filteredEvents
@@ -130,7 +140,7 @@ export default function Timeline() {
           <div key={event.id} className="timeline-node">
             <div className="node-dot"></div>
             <div className="node-date">{event.date}</div>
-            <EventCard event={event} />
+            <EventCard event={event} isFavorited={state.favoritedEventIds.includes(event.id)} />
           </div>
         ))}
       </div>

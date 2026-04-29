@@ -101,14 +101,14 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(76px, 1fr));
+  gap: 10px;
 }
 
 .stat-item {
   background: var(--bg-primary);
   border-radius: 8px;
-  padding: 16px 12px;
+  padding: 16px 25px;
   text-align: center;
 }
 
@@ -125,6 +125,8 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: 4px;
+  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .export-buttons {

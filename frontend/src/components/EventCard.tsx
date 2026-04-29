@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import type { TimelineEvent } from '../types'
+import { addFavorite, deleteFavorite } from '../services/api'
+import { useTimeline } from '../context/TimelineContext'
 import './EventCard.css'
 
 interface EventCardProps {
   event: TimelineEvent
+  isFavorited?: boolean
 }
 
 const TYPE_COLORS: Record<string, string> = {
@@ -16,9 +20,46 @@ const TYPE_COLORS: Record<string, string> = {
   other: '#6B7280',
 }
 
-export default function EventCard({ event }: EventCardProps) {
+export default function EventCard({ event, isFavorited = false }: EventCardProps) {
+  const { addFavoritedEventId, removeFavoritedEventId } = useTimeline()
+  const [favorited, setFavorited] = useState(isFavorited)
+  const [loading, setLoading] = useState(false)
+
+  const handleFavorite = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (loading) return
+
+    setLoading(true)
+    try {
+      if (favorited) {
+        await deleteFavorite(event.id)
+        setFavorited(false)
+        removeFavoritedEventId(event.id)
+      } else {
+        await addFavorite(event.id)
+        setFavorited(true)
+        addFavoritedEventId(event.id)
+      }
+    } catch (err) {
+      console.error('Failed to toggle favorite:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="event-card">
+      <button
+        className={`event-favorite ${favorited ? 'favorited' : ''}`}
+        onClick={handleFavorite}
+        title={favorited ? '已收藏' : '收藏'}
+        disabled={loading}
+      >
+        <svg className="icon" viewBox="0 0 24 24">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+      </button>
       <div className="event-source">
         <span className="source-logo">{event.source_icon}</span>
         <span className="source-name">{event.source}</span>

@@ -33,9 +33,11 @@ async def shutdown():
 # 导入路由
 from app.api import timeline
 from app.api.insights import router as insights_router
+from app.api.favorites import router as favorites_router
 
 app.include_router(timeline.router, prefix="/api", tags=["timeline"])
 app.include_router(insights_router, prefix="/api", tags=["insights"])
+app.include_router(favorites_router, prefix="/api", tags=["favorites"])
 
 @app.get("/")
 async def root():

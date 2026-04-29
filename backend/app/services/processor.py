@@ -1,5 +1,5 @@
 from typing import Dict
-from datetime import datetime
+from datetime import date, datetime
 from app.database import get_db_cursor
 
 TRACK_COLORS = {
@@ -25,22 +25,81 @@ def _period_to_days(period: str) -> int:
     return ranges.get(period, 30)
 
 class TimelineProcessor:
-    async def generate_timeline(self, keyword: str, time_range: str) -> Dict:
-        """从数据库获取时间轴数据"""
-        events = self._get_events_from_db(keyword, time_range)
+    async def generate_timeline(self, keyword: str, time_range: str, page: int = 1, page_size: int = 20) -> Dict:
+        """从数据库获取时间轴数据，支持分页"""
+        days = self._time_range_to_days(time_range)
+        with get_db_cursor() as cursor:
+            # 获取总数
+            cursor.execute(
+                """
+                SELECT COUNT(*) as total
+                FROM events
+                WHERE keyword = %s
+                AND publish_date >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                """,
+                (keyword, days),
+            )
+            total = cursor.fetchone()["total"]
 
-        if not events:
+            # 分页查询
+            offset = (page - 1) * page_size
+            cursor.execute(
+                """
+                SELECT id, title, url, source, publish_date as date, summary,
+                       ai_commentary, event_type as type, keyword
+                FROM events
+                WHERE keyword = %s
+                AND publish_date >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                ORDER BY publish_date DESC
+                LIMIT %s OFFSET %s
+                """,
+                (keyword, days, page_size, offset),
+            )
+            rows = cursor.fetchall()
+
+        type_names = {
+            "policy": "政策",
+            "funding": "融资",
+            "product": "产品发布",
+            "ma": "并购",
+            "tech": "技术突破",
+            "report": "财报",
+            "person": "人物",
+            "other": "其他",
+        }
+
+        events = []
+        for row in rows:
+            events.append({
+                "id": row["id"],
+                "date": row["date"].strftime("%Y-%m-%d") if row["date"] else "",
+                "title": row["title"],
+                "summary": row["summary"] or "",
+                "source": row["source"] or "",
+                "source_icon": (row["source"] or "")[:2],
+                "type": row["type"],
+                "type_name": type_names.get(row["type"], "其他"),
+                "ai_commentary": row["ai_commentary"] or "",
+                "url": row["url"] or "",
+            })
+
+        if not events and total == 0:
             return {
                 "success": False,
                 "error": "未找到相关事件，请尝试其他关键词",
             }
+
+        total_pages = (total + page_size - 1) // page_size if total > 0 else 1
 
         return {
             "success": True,
             "data": {
                 "keyword": keyword,
                 "time_range": time_range,
-                "total_count": len(events),
+                "total_count": total,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": total_pages,
                 "events": events,
             },
         }
@@ -335,9 +394,181 @@ class TimelineProcessor:
             cursor.execute("DELETE FROM industries WHERE name = %s", (name,))
         return {"success": True}
 
-    def get_all_events(self, time_range: str = "month") -> Dict:
-        """获取所有产业的事件"""
+    def search_by_source(self, source_name: str, time_range: str, page: int = 1, page_size: int = 20) -> Dict:
+        """按来源名称搜索事件，支持分页"""
         with get_db_cursor() as cursor:
+            # 先查找匹配的来源
+            cursor.execute(
+                "SELECT name FROM sources WHERE name LIKE %s LIMIT 1",
+                (f"%{source_name}%",),
+            )
+            source_row = cursor.fetchone()
+
+            if not source_row:
+                return {
+                    "success": False,
+                    "error": f"未找到名称包含 '{source_name}' 的来源",
+                }
+
+            matched_source_name = source_row["name"]
+
+            # 获取总数
+            cursor.execute(
+                """
+                SELECT COUNT(*) as total
+                FROM events
+                WHERE source = %s
+                AND publish_date >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                """,
+                (matched_source_name, self._time_range_to_days(time_range)),
+            )
+            total = cursor.fetchone()["total"]
+
+            # 分页查询
+            offset = (page - 1) * page_size
+            cursor.execute(
+                """
+                SELECT id, title, url, source, publish_date as date, summary,
+                       ai_commentary, event_type as type, keyword
+                FROM events
+                WHERE source = %s
+                AND publish_date >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                ORDER BY publish_date DESC
+                LIMIT %s OFFSET %s
+                """,
+                (matched_source_name, self._time_range_to_days(time_range), page_size, offset),
+            )
+            rows = cursor.fetchall()
+
+        type_names = {
+            "policy": "政策",
+            "funding": "融资",
+            "product": "产品发布",
+            "ma": "并购",
+            "tech": "技术突破",
+            "report": "财报",
+            "person": "人物",
+            "other": "其他",
+        }
+
+        events = []
+        for row in rows:
+            events.append({
+                "id": row["id"],
+                "date": row["date"].strftime("%Y-%m-%d") if row["date"] else "",
+                "title": row["title"],
+                "summary": row["summary"] or "",
+                "source": row["source"] or "",
+                "source_icon": (row["source"] or "")[:2],
+                "type": row["type"],
+                "type_name": type_names.get(row["type"], "其他"),
+                "ai_commentary": row["ai_commentary"] or "",
+                "url": row["url"] or "",
+                "keyword": row["keyword"] or "",
+            })
+
+        total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+
+        return {
+            "success": True,
+            "data": {
+                "keyword": f"来源: {matched_source_name}",
+                "time_range": time_range,
+                "total_count": total,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": total_pages,
+                "events": events,
+            },
+        }
+
+    def search_by_person(self, person_name: str, time_range: str, page: int = 1, page_size: int = 20) -> Dict:
+        """按人名模糊搜索事件，支持分页"""
+        with get_db_cursor() as cursor:
+            # 获取总数
+            cursor.execute(
+                """
+                SELECT COUNT(*) as total
+                FROM events
+                WHERE title LIKE %s
+                AND publish_date >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                """,
+                (f"%{person_name}%", self._time_range_to_days(time_range)),
+            )
+            total = cursor.fetchone()["total"]
+
+            # 分页查询
+            offset = (page - 1) * page_size
+            cursor.execute(
+                """
+                SELECT id, title, url, source, publish_date as date, summary,
+                       ai_commentary, event_type as type, keyword
+                FROM events
+                WHERE title LIKE %s
+                AND publish_date >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                ORDER BY publish_date DESC
+                LIMIT %s OFFSET %s
+                """,
+                (f"%{person_name}%", self._time_range_to_days(time_range), page_size, offset),
+            )
+            rows = cursor.fetchall()
+
+        type_names = {
+            "policy": "政策",
+            "funding": "融资",
+            "product": "产品发布",
+            "ma": "并购",
+            "tech": "技术突破",
+            "report": "财报",
+            "person": "人物",
+            "other": "其他",
+        }
+
+        events = []
+        for row in rows:
+            events.append({
+                "id": row["id"],
+                "date": row["date"].strftime("%Y-%m-%d") if row["date"] else "",
+                "title": row["title"],
+                "summary": row["summary"] or "",
+                "source": row["source"] or "",
+                "source_icon": (row["source"] or "")[:2],
+                "type": row["type"],
+                "type_name": type_names.get(row["type"], "其他"),
+                "ai_commentary": row["ai_commentary"] or "",
+                "url": row["url"] or "",
+                "keyword": row["keyword"] or "",
+            })
+
+        total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+
+        return {
+            "success": True,
+            "data": {
+                "keyword": f"人物: {person_name}",
+                "time_range": time_range,
+                "total_count": total,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": total_pages,
+                "events": events,
+            },
+        }
+
+    def get_all_events(self, time_range: str = "month", page: int = 1, page_size: int = 20) -> Dict:
+        """获取所有产业的事件，支持分页"""
+        with get_db_cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT COUNT(*) as total
+                FROM events
+                WHERE publish_date >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
+                """,
+                (self._time_range_to_days(time_range),),
+            )
+            total = cursor.fetchone()["total"]
+
+            offset = (page - 1) * page_size
             cursor.execute(
                 """
                 SELECT id, title, url, source, publish_date as date, summary,
@@ -345,8 +576,9 @@ class TimelineProcessor:
                 FROM events
                 WHERE publish_date >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
                 ORDER BY publish_date DESC
+                LIMIT %s OFFSET %s
                 """,
-                (self._time_range_to_days(time_range),),
+                (self._time_range_to_days(time_range), page_size, offset),
             )
             rows = cursor.fetchall()
 
@@ -382,7 +614,10 @@ class TimelineProcessor:
             "data": {
                 "keyword": "全部",
                 "time_range": time_range,
-                "total_count": len(events),
+                "total_count": total,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": (total + page_size - 1) // page_size if total > 0 else 1,
                 "events": events,
             },
         }
@@ -665,7 +900,10 @@ class TimelineProcessor:
         activities = []
         for row in rows:
             now = datetime.now()
-            diff = now - (row["publish_date"] or now)
+            publish_date = row["publish_date"]
+            if isinstance(publish_date, date) and not isinstance(publish_date, datetime):
+                publish_date = datetime.combine(publish_date, datetime.min.time())
+            diff = now - (publish_date or now)
             if diff.days > 0:
                 time_ago = f"{diff.days}天前"
             elif diff.seconds >= 3600:

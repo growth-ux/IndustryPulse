@@ -1,52 +1,76 @@
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './SourceManager.css'
 import { Source, SourceCategory, categoryNames } from '../types/source'
+import { getSources, addSource, toggleSource, deleteSource, getSourceCategories } from '../services/api'
 
-const initialSources: Source[] = [
-  { id: 1, name: '工信部官网', category: 'official', desc: '工业和信息化部官方政策发布平台，提供最权威的产业政策、规划文件和数据统计。', enabled: true, articles: 1247, lastUpdate: '2小时前' },
-  { id: 2, name: '国家发改委', category: 'official', desc: '国家发展和改革委员会官方网站，发布宏观经济政策、项目审批和产业发展规划。', enabled: true, articles: 892, lastUpdate: '5小时前' },
-  { id: 3, name: '证监会披露', category: 'official', desc: '中国证券监督管理委员会官方披露网站，发布上市公司监管信息、IPO数据和并购重组公告。', enabled: true, articles: 2341, lastUpdate: '1小时前' },
-  { id: 4, name: '36Kr', category: 'media', desc: '聚焦科技创业投资领域，提供最前沿的科技资讯、融资新闻和行业分析报告。', enabled: true, articles: 3892, lastUpdate: '30分钟前' },
-  { id: 5, name: '虎嗅', category: 'media', desc: '知名商业科技媒体，深度报道互联网、科技和商业领域的创新动态和人物专访。', enabled: true, articles: 2156, lastUpdate: '1小时前' },
-  { id: 6, name: '机器之心', category: 'media', desc: '人工智能领域垂直科技媒体，专注AI技术、机器学习和深度学习领域的资讯报道。', enabled: false, articles: 4521, lastUpdate: '已暂停' },
-]
+interface CategoryStats {
+  category: string
+  total: number
+  enabled_count: number
+}
 
 type FilterCategory = 'all' | SourceCategory
 
 export default function SourceManager() {
-  const [sources, setSources] = useState<Source[]>(initialSources)
+  const [sources, setSources] = useState<Source[]>([])
+  const [categoryStats, setCategoryStats] = useState<CategoryStats[]>([])
   const [currentCategory, setCurrentCategory] = useState<FilterCategory>('all')
   const [showAddModal, setShowAddModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
-  const [nextId, setNextId] = useState(7)
+  const [loading, setLoading] = useState(true)
 
   const [formData, setFormData] = useState({
     name: '',
     category: '' as SourceCategory | '',
     url: '',
     desc: '',
+    crawl_type: 'rss' as 'rss' | 'html',
+    list_selector: '',
+    title_selector: '',
   })
 
-  const filteredSources = currentCategory === 'all'
-    ? sources
-    : sources.filter(s => s.category === currentCategory)
+  const loadSources = useCallback(async () => {
+    setLoading(true)
+    try {
+      const [sourcesRes, categoriesRes] = await Promise.all([
+        getSources(currentCategory),
+        getSourceCategories()
+      ])
+      if (sourcesRes.success) {
+        setSources(sourcesRes.sources)
+      }
+      if (categoriesRes.success) {
+        setCategoryStats(categoriesRes.categories)
+      }
+    } catch (err) {
+      console.error('Failed to load sources:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [currentCategory])
+
+  useEffect(() => {
+    loadSources()
+  }, [loadSources])
+
+  const filteredSources = sources
 
   const activeCount = sources.filter(s => s.enabled).length
   const healthPercent = sources.length > 0 ? (activeCount / sources.length) * 100 : 0
 
   const getCategoryStats = useCallback((cat: SourceCategory) => {
-    const catSources = sources.filter(s => s.category === cat)
-    return {
-      enabled: catSources.filter(s => s.enabled).length,
-      disabled: catSources.filter(s => !s.enabled).length,
-    }
-  }, [sources])
+    const stats = categoryStats.find(c => c.category === cat)
+    return stats ? { enabled: stats.enabled_count, disabled: stats.total - stats.enabled_count } : { enabled: 0, disabled: 0 }
+  }, [categoryStats])
 
-  const handleToggle = (id: number) => {
-    setSources(prev => prev.map(s =>
-      s.id === id ? { ...s, enabled: !s.enabled } : s
-    ))
+  const handleToggle = async (id: number) => {
+    const result = await toggleSource(id)
+    if (result.success) {
+      setSources(prev => prev.map(s =>
+        s.id === id ? { ...s, enabled: !s.enabled } : s
+      ))
+    }
   }
 
   const handleDeleteClick = (id: number) => {
@@ -54,39 +78,45 @@ export default function SourceManager() {
     setShowDeleteModal(true)
   }
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteTargetId !== null) {
-      setSources(prev => prev.filter(s => s.id !== deleteTargetId))
-      setShowDeleteModal(false)
-      setDeleteTargetId(null)
+      const result = await deleteSource(deleteTargetId)
+      if (result.success) {
+        setSources(prev => prev.filter(s => s.id !== deleteTargetId))
+        setShowDeleteModal(false)
+        setDeleteTargetId(null)
+      }
     }
   }
 
-  const handleAddSource = (e: React.FormEvent) => {
+  const handleAddSource = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.name || !formData.category) return
 
-    const newSource: Source = {
-      id: nextId,
+    const result = await addSource({
       name: formData.name,
-      category: formData.category as SourceCategory,
-      desc: formData.desc || '暂无描述',
-      enabled: true,
-      articles: 0,
-      lastUpdate: '刚刚添加',
-      url: formData.url,
-    }
+      category: formData.category,
+      url: formData.url || undefined,
+      description: formData.desc || undefined,
+      crawl_type: formData.crawl_type,
+      list_selector: formData.list_selector || undefined,
+      title_selector: formData.title_selector || undefined,
+    })
 
-    setSources(prev => [...prev, newSource])
-    setNextId(prev => prev + 1)
-    setFormData({ name: '', category: '', url: '', desc: '' })
-    setShowAddModal(false)
+    if (result.success) {
+      setFormData({ name: '', category: '', url: '', desc: '', crawl_type: 'rss', list_selector: '', title_selector: '' })
+      setShowAddModal(false)
+      loadSources()
+    }
   }
 
   const renderCategoryItem = (cat: FilterCategory, label: string, dotClass?: string) => {
     const isAll = cat === 'all'
     const stats = isAll
-      ? { enabled: sources.length, disabled: 0 }
+      ? {
+          enabled: sources.length,
+          disabled: 0
+        }
       : getCategoryStats(cat as SourceCategory)
 
     return (
@@ -106,6 +136,25 @@ export default function SourceManager() {
         </div>
       </div>
     )
+  }
+
+  const formatLastUpdate = (dateStr: string | undefined) => {
+    if (!dateStr) return '暂无'
+    try {
+      const date = new Date(dateStr)
+      const now = new Date()
+      const diffMs = now.getTime() - date.getTime()
+      const diffMins = Math.floor(diffMs / 60000)
+      const diffHours = Math.floor(diffMins / 60)
+      const diffDays = Math.floor(diffHours / 24)
+
+      if (diffMins < 60) return `${diffMins}分钟前`
+      if (diffHours < 24) return `${diffHours}小时前`
+      if (diffDays < 30) return `${diffDays}天前`
+      return date.toLocaleDateString('zh-CN')
+    } catch {
+      return dateStr
+    }
   }
 
   return (
@@ -177,80 +226,88 @@ export default function SourceManager() {
             </button>
           </div>
 
-          <div className="sm-source-grid">
-            {filteredSources.map(source => (
-              <div
-                key={source.id}
-                className={`sm-source-card ${source.enabled ? '' : 'disabled'}`}
-                data-category={source.category}
-                data-id={source.id}
-              >
-                <div className="sm-source-card-header">
-                  <div className="sm-source-logo-wrap">
-                    <div className={`sm-source-logo ${source.category}`}>
-                      {source.name.charAt(0)}
-                    </div>
-                    <div className="sm-source-info">
-                      <div className="sm-source-name">{source.name}</div>
-                      <span className={`sm-source-category-tag ${source.category}`}>
-                        {categoryNames[source.category]}
-                      </span>
-                    </div>
-                  </div>
-                  <label className="sm-source-toggle">
-                    <input
-                      type="checkbox"
-                      checked={source.enabled}
-                      onChange={() => handleToggle(source.id)}
-                    />
-                    <span className="sm-source-toggle-slider" />
-                  </label>
-                </div>
-                <p className="sm-source-desc">{source.desc}</p>
-                <div className="sm-source-meta">
-                  <div className="sm-source-stats">
-                    <div className="sm-source-stat">
-                      <svg className="icon icon-sm" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <polyline points="14 2 14 8 20 8" />
-                      </svg>
-                      <span className="sm-source-stat-value">{source.articles.toLocaleString()}</span>
-                    </div>
-                    <div className="sm-source-stat">
-                      <svg className="icon icon-sm" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
-                        <circle cx="12" cy="12" r="10" />
-                        <polyline points="12 6 12 12 16 14" />
-                      </svg>
-                      <span className="sm-source-stat-value">{source.lastUpdate}</span>
-                    </div>
-                  </div>
-                  <div className="sm-source-actions">
-                    <button className="sm-source-action-btn" title="编辑">
-                      <svg className="icon" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                    </button>
-                    <button
-                      className="sm-source-action-btn danger"
-                      title="删除"
-                      onClick={() => handleDeleteClick(source.id)}
-                    >
-                      <svg className="icon" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+          {loading ? (
+            <div className="sm-source-grid">
+              <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
+                加载中...
               </div>
-            ))}
-
-            <div className="sm-add-source-card" onClick={() => setShowAddModal(true)}>
-              <div className="sm-add-icon">+</div>
-              <span className="sm-add-label">添加新订阅源</span>
             </div>
-          </div>
+          ) : (
+            <div className="sm-source-grid">
+              {filteredSources.map(source => (
+                <div
+                  key={source.id}
+                  className={`sm-source-card ${source.enabled ? '' : 'disabled'}`}
+                  data-category={source.category}
+                  data-id={source.id}
+                >
+                  <div className="sm-source-card-header">
+                    <div className="sm-source-logo-wrap">
+                      <div className={`sm-source-logo ${source.category}`}>
+                        {source.name.charAt(0)}
+                      </div>
+                      <div className="sm-source-info">
+                        <div className="sm-source-name">{source.name}</div>
+                        <span className={`sm-source-category-tag ${source.category}`}>
+                          {categoryNames[source.category]}
+                        </span>
+                      </div>
+                    </div>
+                    <label className="sm-source-toggle">
+                      <input
+                        type="checkbox"
+                        checked={source.enabled}
+                        onChange={() => handleToggle(source.id)}
+                      />
+                      <span className="sm-source-toggle-slider" />
+                    </label>
+                  </div>
+                  <p className="sm-source-desc">{source.description || '暂无描述'}</p>
+                  <div className="sm-source-meta">
+                    <div className="sm-source-stats">
+                      <div className="sm-source-stat">
+                        <svg className="icon icon-sm" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                        <span className="sm-source-stat-value">{source.article_count.toLocaleString()}</span>
+                      </div>
+                      <div className="sm-source-stat">
+                        <svg className="icon icon-sm" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
+                          <circle cx="12" cy="12" r="10" />
+                          <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                        <span className="sm-source-stat-value">{formatLastUpdate(source.last_update)}</span>
+                      </div>
+                    </div>
+                    <div className="sm-source-actions">
+                      <button className="sm-source-action-btn" title="编辑">
+                        <svg className="icon" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                      </button>
+                      <button
+                        className="sm-source-action-btn danger"
+                        title="删除"
+                        onClick={() => handleDeleteClick(source.id)}
+                      >
+                        <svg className="icon" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <div className="sm-add-source-card" onClick={() => setShowAddModal(true)}>
+                <div className="sm-add-icon">+</div>
+                <span className="sm-add-label">添加新订阅源</span>
+              </div>
+            </div>
+          )}
         </section>
       </main>
 
@@ -297,6 +354,43 @@ export default function SourceManager() {
                 <option value="data">数据平台</option>
               </select>
             </div>
+            <div className="sm-form-group">
+              <label className="sm-form-label">爬取方式</label>
+              <select
+                className="sm-form-select"
+                value={formData.crawl_type}
+                onChange={(e) => setFormData(prev => ({ ...prev, crawl_type: e.target.value as 'rss' | 'html' }))}
+              >
+                <option value="rss">RSS 订阅</option>
+                <option value="html">网页爬取</option>
+              </select>
+            </div>
+            {formData.crawl_type === 'html' && (
+              <>
+                <div className="sm-form-group">
+                  <label className="sm-form-label">列表选择器</label>
+                  <input
+                    type="text"
+                    className="sm-form-input"
+                    placeholder="如：.article-list"
+                    value={formData.list_selector}
+                    onChange={(e) => setFormData(prev => ({ ...prev, list_selector: e.target.value }))}
+                  />
+                  <p className="sm-form-hint">CSS 选择器定位文章列表容器</p>
+                </div>
+                <div className="sm-form-group">
+                  <label className="sm-form-label">标题选择器</label>
+                  <input
+                    type="text"
+                    className="sm-form-input"
+                    placeholder="如：h3.title a"
+                    value={formData.title_selector}
+                    onChange={(e) => setFormData(prev => ({ ...prev, title_selector: e.target.value }))}
+                  />
+                  <p className="sm-form-hint">CSS 选择器定位标题和链接</p>
+                </div>
+              </>
+            )}
             <div className="sm-form-group">
               <label className="sm-form-label">来源 URL</label>
               <input

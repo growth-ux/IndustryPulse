@@ -1,14 +1,19 @@
 export type SourceCategory = 'official' | 'media' | 'academic' | 'social' | 'data'
 
+export type CrawlType = 'rss' | 'html'
+
 export interface Source {
   id: number
   name: string
   category: SourceCategory
-  desc: string
+  description?: string
   enabled: boolean
-  articles: number
-  lastUpdate: string
+  article_count: number
+  last_update?: string
   url?: string
+  crawl_type: CrawlType
+  list_selector?: string
+  title_selector?: string
 }
 
 export const categoryNames: Record<string, string> = {
