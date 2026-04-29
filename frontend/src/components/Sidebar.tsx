@@ -24,11 +24,8 @@ export default function Sidebar() {
 
   const handleFilterClick = (type: string) => {
     if (type === 'all') {
-      if (state.activeFilters.length === sortedTypeStats.length) {
-        setActiveFilters([])
-      } else {
-        setActiveFilters(sortedTypeStats.map((t) => t.type))
-      }
+      // 点击"全部"则选中所有类型
+      setActiveFilters(sortedTypeStats.map((t) => t.type))
     } else {
       toggleFilter(type)
     }
