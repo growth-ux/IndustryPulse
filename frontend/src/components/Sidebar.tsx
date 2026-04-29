@@ -22,6 +22,8 @@ export default function Sidebar() {
     }
   }, [state.typeStats])
 
+  const sortedTypeStats = [...state.typeStats].sort((a, b) => b.count - a.count)
+
   const handleFilterClick = (type: string) => {
     if (type === 'all') {
       // 点击"全部"则选中所有类型
@@ -38,7 +40,6 @@ export default function Sidebar() {
     await exportData(state.keyword, state.timeRange, format)
   }
 
-  const sortedTypeStats = [...state.typeStats].sort((a, b) => b.count - a.count)
   const totalCount = state.typeStats.reduce((sum, t) => sum + t.count, 0)
   const sourceCount = new Set(state.events.map((e) => e.source)).size
 
