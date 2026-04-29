@@ -4,10 +4,10 @@ import SearchPanel from './components/SearchPanel'
 import Sidebar from './components/Sidebar'
 import Timeline from './components/Timeline'
 import SourceManager from './components/SourceManager'
+import Insights from './pages/Insights'
 import { TimelineProvider } from './context/TimelineContext'
 
 function MainLayout() {
-
   return (
     <div className="app">
       <Header />
@@ -20,13 +20,32 @@ function MainLayout() {
   )
 }
 
+function SourceLayout() {
+  return (
+    <div className="app">
+      <Header />
+      <SourceManager />
+    </div>
+  )
+}
+
+function InsightsLayout() {
+  return (
+    <div className="app">
+      <Header />
+      <Insights />
+    </div>
+  )
+}
+
 function App() {
   return (
     <BrowserRouter>
       <TimelineProvider>
         <Routes>
           <Route path="/" element={<MainLayout />} />
-          <Route path="/sources" element={<SourceManager />} />
+          <Route path="/sources" element={<SourceLayout />} />
+          <Route path="/insights" element={<InsightsLayout />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </TimelineProvider>
