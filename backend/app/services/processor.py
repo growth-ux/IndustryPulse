@@ -809,33 +809,32 @@ class TimelineProcessor:
         }
 
     def get_insight_comparison(self) -> Dict:
-        """获取赛道对比数据"""
-        track_names_list = list(TRACK_NAMES.values())
-        placeholders = ", ".join(["%s"] * len(track_names_list))
-
+        """获取赛道对比数据 - 动态查询有事件的赛道"""
         with get_db_cursor() as cursor:
-            cursor.execute(
-                f"""
-                SELECT keyword, COUNT(*) as count, AVG(sentiment_score) as avg_sentiment
+            cursor.execute("""
+                SELECT DISTINCT keyword, COUNT(*) as count,
+                       AVG(sentiment_score) as avg_sentiment
                 FROM events
-                WHERE keyword IN ({placeholders}) AND publish_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                WHERE publish_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                AND keyword IS NOT NULL AND keyword != ''
                 GROUP BY keyword
-                """,
-                track_names_list,
-            )
+            """, ())
             rows = cursor.fetchall()
 
-        # Build a map from keyword name to (count, avg_sentiment)
-        stats_map = {row["keyword"]: (row["count"] or 0, float(row["avg_sentiment"] or 0.5) * 100) for row in rows}
+            # 获取 industries 表的颜色映射
+            cursor.execute("SELECT name, color FROM industries")
+            industry_colors = {row["name"]: row["color"] for row in cursor.fetchall()}
 
         tracks = []
-        for track_id, name in TRACK_NAMES.items():
-            count, sentiment = stats_map.get(name, (0, 50.0))
+        for row in rows:
+            name = row["keyword"]
+            count = row["count"] or 0
+            sentiment = float(row["avg_sentiment"] or 0.5) * 100
             heat = min(100, (count / 100 * 40) + (sentiment * 0.3) + 20)
             tracks.append({
-                "id": track_id,
+                "id": name,
                 "name": name,
-                "color": TRACK_COLORS.get(track_id, "#6B7280"),
+                "color": industry_colors.get(name, "#6B7280"),
                 "content_count": count,
                 "heat_index": round(heat, 1),
                 "trend": 0.0,
@@ -846,10 +845,7 @@ class TimelineProcessor:
         for i, t in enumerate(tracks):
             t["trend"] = round(5.0 - i * 0.8, 1)
 
-        return {
-            "success": True,
-            "data": {"tracks": tracks},
-        }
+        return {"success": True, "data": {"tracks": tracks}}
 
     def get_insight_activities(self, track: str, limit: int = 5) -> Dict:
         """获取最新动态"""
