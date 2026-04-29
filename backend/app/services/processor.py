@@ -756,7 +756,7 @@ class TimelineProcessor:
     def get_insight_distribution(self, track: str, period: str) -> Dict:
         """获取内容分布数据"""
         days = _period_to_days(period)
-        keyword = TRACK_NAMES.get(track, track)
+        keyword = track
 
         type_names = {
             "policy": ("政策利好", "#059669"),
@@ -853,7 +853,7 @@ class TimelineProcessor:
 
     def get_insight_activities(self, track: str, limit: int = 5) -> Dict:
         """获取最新动态"""
-        keyword = TRACK_NAMES.get(track, track)
+        keyword = track
 
         type_names = {
             "policy": "政策",
