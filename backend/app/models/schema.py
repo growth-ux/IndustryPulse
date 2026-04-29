@@ -82,6 +82,7 @@ class Industry(BaseModel):
     is_system: bool
     count: int = 0
     latest_date: Optional[str] = None
+    color: str = "#6B7280"
 
 class IndustriesResponse(BaseModel):
     success: bool
