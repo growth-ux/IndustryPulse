@@ -593,21 +593,27 @@ class TimelineProcessor:
 
     def get_insight_comparison(self) -> Dict:
         """获取赛道对比数据"""
+        track_names_list = list(TRACK_NAMES.values())
+        placeholders = ", ".join(["%s"] * len(track_names_list))
+
+        with get_db_cursor() as cursor:
+            cursor.execute(
+                f"""
+                SELECT keyword, COUNT(*) as count, AVG(sentiment_score) as avg_sentiment
+                FROM events
+                WHERE keyword IN ({placeholders}) AND publish_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                GROUP BY keyword
+                """,
+                track_names_list,
+            )
+            rows = cursor.fetchall()
+
+        # Build a map from keyword name to (count, avg_sentiment)
+        stats_map = {row["keyword"]: (row["count"] or 0, float(row["avg_sentiment"] or 0.5) * 100) for row in rows}
+
         tracks = []
         for track_id, name in TRACK_NAMES.items():
-            with get_db_cursor() as cursor:
-                cursor.execute(
-                    """
-                    SELECT COUNT(*) as count, AVG(sentiment_score) as avg_sentiment
-                    FROM events
-                    WHERE keyword = %s AND publish_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-                    """,
-                    (name,),
-                )
-                row = cursor.fetchone()
-                count = row["count"] or 0
-                sentiment = float(row["avg_sentiment"] or 0.5) * 100
-
+            count, sentiment = stats_map.get(name, (0, 50.0))
             heat = min(100, (count / 100 * 40) + (sentiment * 0.3) + 20)
             tracks.append({
                 "id": track_id,
