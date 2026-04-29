@@ -37,8 +37,18 @@ export default function Header() {
           </svg>
           订阅源管理
         </Link>
+        <Link
+          to="/insights"
+          className={`nav-link ${location.pathname === '/insights' ? 'active' : ''}`}
+        >
+          <svg className="icon" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          数据洞察
+        </Link>
       </nav>
-      <span className="tagline">产业热点 · 时间脉络 · AI洞察</span>
     </header>
   )
 }
