@@ -640,7 +640,7 @@ class TimelineProcessor:
     def get_insight_stats(self, track: str, period: str) -> Dict:
         """获取统计卡片数据"""
         days = _period_to_days(period)
-        keyword = TRACK_NAMES.get(track, track)
+        keyword = track
 
         with get_db_cursor() as cursor:
             # 当前周期内容量
