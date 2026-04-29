@@ -1,14 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getInsightStats, getInsightTrends, getInsightDistribution, getInsightComparison, getInsightActivities, InsightStats, TrendData, DistributionData, TrackComparison, ActivityItem } from '../services/insights'
+import { getIndustries } from '../services/api'
 
-const TRACKS = [
-  { id: 'new-energy', name: '新能源汽车', color: '#059669' },
-  { id: 'semiconductor', name: '半导体', color: '#2563EB' },
-  { id: 'biotech', name: '生物医药', color: '#7C3AED' },
-  { id: 'ai', name: '人工智能', color: '#DB2777' },
-  { id: 'ev', name: '智能驾驶', color: '#D97706' },
-  { id: 'robotics', name: '机器人', color: '#0891B2' },
-]
+// No TRACKS constant - will be loaded dynamically
 
 const PERIODS = [
   { id: '7d', label: '近7天' },
@@ -18,7 +12,8 @@ const PERIODS = [
 ]
 
 export default function Insights() {
-  const [track, setTrack] = useState('new-energy')
+  const [tracks, setTracks] = useState<Array<{name: string, icon: string, color: string}>>([])
+  const [track, setTrack] = useState<string>('')
   const [period, setPeriod] = useState('30d')
   const [stats, setStats] = useState<InsightStats | null>(null)
   const [trendData, setTrendData] = useState<TrendData | null>(null)
@@ -52,7 +47,22 @@ export default function Insights() {
     loadData()
   }, [loadData])
 
-  const trackColor = TRACKS.find(t => t.id === track)?.color || '#059669'
+  useEffect(() => {
+    async function loadTracks() {
+      const res = await getIndustries()
+      if (res.success && res.industries.length > 0) {
+        setTracks(res.industries.map((i: any) => ({
+          name: i.name,
+          icon: i.icon,
+          color: i.color || '#6B7280'
+        })))
+        setTrack(res.industries[0].name)
+      }
+    }
+    loadTracks()
+  }, [])
+
+  const trackColor = tracks.find(t => t.name === track)?.color || '#6B7280'
 
   return (
     <div className="insights-page">
@@ -78,13 +88,14 @@ export default function Insights() {
       <main className="main-container">
         {/* Track Selector */}
         <div className="track-selector">
-          {TRACKS.map(t => (
+          {tracks.map(t => (
             <div
-              key={t.id}
-              className={`track-chip ${track === t.id ? 'active' : ''}`}
+              key={t.name}
+              className={`track-chip ${track === t.name ? 'active' : ''}`}
               style={{ '--track-color': t.color } as React.CSSProperties}
-              onClick={() => setTrack(t.id)}
+              onClick={() => setTrack(t.name)}
             >
+              <span className="track-chip-icon">{t.icon}</span>
               <div className="track-chip-dot" />
               <span className="track-chip-name">{t.name}</span>
             </div>
