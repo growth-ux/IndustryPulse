@@ -101,6 +101,7 @@ class SourceCategory(str, Enum):
 class CrawlType(str, Enum):
     RSS = "rss"
     HTML = "html"
+    SITEMAP = "sitemap"
 
 class Source(BaseModel):
     id: int
