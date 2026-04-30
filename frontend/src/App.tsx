@@ -6,6 +6,7 @@ import Timeline from './components/Timeline'
 import SourceManager from './components/SourceManager'
 import Favorites from './components/Favorites'
 import Insights from './pages/Insights'
+import Hot from './pages/Hot'
 import { TimelineProvider } from './context/TimelineContext'
 
 function MainLayout() {
@@ -48,16 +49,26 @@ function InsightsLayout() {
   )
 }
 
+function HotLayout() {
+  return (
+    <div className="app">
+      <Header />
+      <Hot />
+    </div>
+  )
+}
+
 function App() {
   return (
     <BrowserRouter>
       <TimelineProvider>
         <Routes>
+          <Route path="/hot" element={<HotLayout />} />
           <Route path="/" element={<MainLayout />} />
           <Route path="/sources" element={<SourceLayout />} />
           <Route path="/favorites" element={<FavoritesLayout />} />
           <Route path="/insights" element={<InsightsLayout />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/hot" replace />} />
         </Routes>
       </TimelineProvider>
     </BrowserRouter>

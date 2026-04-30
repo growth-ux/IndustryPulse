@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndustryPulse — 今日热点</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F8F9FB;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EEF1F5;
+            --text-primary: #111827;
+            --text-secondary: #4B5563;
+            --text-muted: #9CA3AF;
+            --accent-primary: #0F766E;
+            --accent-hover: #0D5D56;
+            --accent-light: #CCFBF1;
+            --accent-secondary: #7C3AED;
+            --accent-secondary-light: #EDE9FE;
+            --border: #E5E7EB;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --shadow-hover: rgba(0, 0, 0, 0.12);
+            --hot-gradient-start: #F97316;
+            --hot-gradient-end: #EF4444;
+            --hot-bg: #FFF7ED;
+            --hot-border: #FED7AA;
+            --track-new-energy: #059669;
+            --track-semiconductor: #2563EB;
+            --track-biotech: #7C3AED;
+            --track-ai: #DB2777;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .logo-text {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 200ms ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, var(--hot-gradient-start), var(--hot-gradient-end));
+            font-weight: 600;
+        }
+
+        .nav-link .icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px 6px 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .user-menu:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 40px 40px 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: 20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: var(--hot-bg);
+            border: 1px solid var(--hot-border);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--hot-gradient-start);
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-badge .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--hot-gradient-start);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 38px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, var(--hot-gradient-start), var(--hot-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        /* ===== Search Bar ===== */
+        .search-section {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px 16px 52px;
+            font-family: inherit;
+            font-size: 16px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            outline: none;
+            transition: all 250ms ease;
+            background: var(--bg-primary);
+        }
+
+        .search-input:focus {
+            border-color: var(--hot-gradient-start);
+            background: var(--bg-secondary);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            transition: color 250ms ease;
+        }
+
+        .search-input:focus ~ .search-icon {
+            color: var(--hot-gradient-start);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 200ms ease;
+        }
+
+        .search-clear.visible {
+            display: flex;
+        }
+
+        .search-clear:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        /* Search Filters */
+        .search-filters {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--hot-gradient-start);
+            color: var(--hot-gradient-start);
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(135deg, var(--hot-gradient-start), var(--hot-gradient-end));
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .filter-chip .count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        /* ===== Main Content ===== */
+        .main-container {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            position: sticky;
+            top: 24px;
+            height: fit-content;
+        }
+
+        .sidebar-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Trending Tags */
+        .trending-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .trending-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 200ms ease;
+            border: 1px solid transparent;
+        }
+
+        .trending-item:hover {
+            background: var(--hot-bg);
+            border-color: var(--hot-border);
+        }
+
+        .trending-rank {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--hot-gradient-start);
+            min-width: 20px;
+        }
+
+        .trending-rank.top {
+            color: var(--hot-gradient-end);
+        }
+
+        .trending-text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .trending-heat {
+            display: flex;
+            gap: 2px;
+        }
+
+        .heat-bar {
+            width: 4px;
+            height: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            transition: background 200ms ease;
+        }
+
+        .heat-bar.active {
+            background: linear-gradient(180deg, var(--hot-gradient-start), var(--hot-gradient-end));
+        }
+
+        .trending-item:hover .heat-bar.active {
+            animation: heatPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes heatPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Category Filter */
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 200ms ease;
+            border: 1px solid transparent;
+        }
+
+        .category-item:hover {
+            background: var(--bg-primary);
+        }
+
+        .category-item.active {
+            background: var(--hot-bg);
+            border-color: var(--hot-border);
+        }
+
+        .category-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .category-name {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .category-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Stats */
+        .hot-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .hot-stat {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.08), rgba(239, 68, 68, 0.08));
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid var(--hot-border);
+        }
+
+        .hot-stat-value {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 24px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--hot-gradient-start), var(--hot-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hot-stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ===== Content Area ===== */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .content-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 4px 10px;
+            background: var(--hot-bg);
+            border-radius: 12px;
+            color: var(--hot-gradient-start);
+        }
+
+        .content-sort {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sort-btn {
+            padding: 8px 14px;
+            font-family: inherit;
+            font-size: 13px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .sort-btn:hover {
+            border-color: var(--hot-gradient-start);
+            color: var(--hot-gradient-start);
+        }
+
+        .sort-btn.active {
+            background: linear-gradient(135deg, var(--hot-gradient-start), var(--hot-gradient-end));
+            border-color: transparent;
+            color: #fff;
+        }
+
+        /* Article Cards */
+        .article-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .article-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 250ms ease;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: cardAppear 400ms ease forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--hot-gradient-start), var(--hot-gradient-end));
+            opacity: 0;
+            transition: opacity 200ms ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow-hover);
+            border-color: var(--hot-border);
+        }
+
+        .article-card:hover::before {
+            opacity: 1;
+        }
+
+        .article-card:nth-child(1) { animation-delay: 0ms; }
+        .article-card:nth-child(2) { animation-delay: 60ms; }
+        .article-card:nth-child(3) { animation-delay: 120ms; }
+        .article-card:nth-child(4) { animation-delay: 180ms; }
+        .article-card:nth-child(5) { animation-delay: 240ms; }
+
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .article-card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .article-rank-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(239, 68, 68, 0.1));
+            color: var(--hot-gradient-start);
+            border: 1px solid var(--hot-border);
+        }
+
+        .article-rank-badge.top1 {
+            background: linear-gradient(135deg, var(--hot-gradient-start), var(--hot-gradient-end));
+            color: #fff;
+            border: none;
+        }
+
+        .article-content {
+            flex: 1;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .article-category {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .article-source {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .article-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .article-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .article-title a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 200ms ease;
+        }
+
+        .article-title a:hover {
+            color: var(--hot-gradient-start);
+        }
+
+        .article-excerpt {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .article-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .article-action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 200ms ease;
+        }
+
+        .article-action-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .article-action-btn.bookmark {
+            color: var(--text-muted);
+        }
+
+        .article-action-btn.bookmark:hover {
+            color: var(--hot-gradient-start);
+            background: var(--hot-bg);
+        }
+
+        .article-action-btn.bookmark.active {
+            color: var(--hot-gradient-start);
+            background: var(--hot-bg);
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--hot-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .empty-icon .icon {
+            width: 40px;
+            height: 40px;
+            color: var(--hot-gradient-start);
+        }
+
+        .empty-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 320px;
+        }
+
+        /* API Key Notice */
+        .api-notice {
+            background: var(--hot-bg);
+            border: 1px solid var(--hot-border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .api-notice-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .api-notice-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .api-notice-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--hot-gradient-start), var(--hot-gradient-end));
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .api-notice-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+        }
+
+        /* ===== Loading State ===== */
+        .loading-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .loading-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .loading-content {
+            flex: 1;
+        }
+
+        .loading-line {
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            margin-bottom: 8px;
+        }
+
+        .loading-line.short {
+            width: 60%;
+        }
+
+        .loading-line.medium {
+            width: 80%;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ===== Icons ===== */
+        .icon {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .icon-sm {
+            width: 14px;
+            height: 14px;
+        }
+
+        .icon-xs {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 24px;
+            }
+
+            .sidebar {
+                position: static;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .sidebar-section {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .hero {
+                padding: 24px 20px 32px;
+            }
+
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .article-card {
+                padding: 16px;
+            }
+
+            .article-card-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .search-filters {
+                gap: 8px;
+            }
+
+            .filter-chip {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                </div>
+                <span class="logo-text">IndustryPulse</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="nav-links">
+                <a href="#" class="nav-link active">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                    </svg>
+                    今日热点
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    产业赛道
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M4 11a9 9 0 0 1 9 9"></path>
+                        <path d="M4 4a16 16 0 0 1 16 16"></path>
+                        <circle cx="5" cy="19" r="1"></circle>
+                    </svg>
+                    订阅源管理
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    数据洞察
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    我的收藏
+                </a>
+            </nav>
+            <div class="user-menu">
+                <div class="user-avatar">W</div>
+                <span class="user-name">weiyu</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-badge">
+                <span class="pulse"></span>
+                实时更新
+            </div>
+            <h1 class="hero-title"><span>今日热点</span> 一触即达</h1>
+            <p class="hero-subtitle">汇聚全网科技财经热点，追踪行业前沿动态</p>
+
+            <!-- Search Bar -->
+            <div class="search-section">
+                <div class="search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" class="search-input" id="searchInput" placeholder="搜索热点新闻关键词...">
+                    <button class="search-clear" id="searchClear">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="search-filters">
+                    <div class="filter-chip active" data-filter="all">
+                        全部
+                        <span class="count" id="totalCount">0</span>
+                    </div>
+                    <div class="filter-chip" data-filter="tech">
+                        科技
+                        <span class="count" id="techCount">0</span>
+                    </div>
+                    <div class="filter-chip" data-filter="finance">
+                        财经
+                        <span class="count" id="financeCount">0</span>
+                    </div>
+                    <div class="filter-chip" data-filter="business">
+                        商业
+                        <span class="count" id="businessCount">0</span>
+                    </div>
+                    <div class="filter-chip" data-filter="ai">
+                        AI
+                        <span class="count" id="aiCount">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Hot Stats -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                    </svg>
+                    热点概览
+                </h3>
+                <div class="hot-stats">
+                    <div class="hot-stat">
+                        <div class="hot-stat-value" id="totalStat">--</div>
+                        <div class="hot-stat-label">总热点数</div>
+                    </div>
+                    <div class="hot-stat">
+                        <div class="hot-stat-value" id="updateTime">--</div>
+                        <div class="hot-stat-label">更新时间</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trending Topics -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    热搜话题
+                </h3>
+                <div class="trending-list" id="trendingList">
+                    <div class="trending-item">
+                        <span class="trending-rank top">1</span>
+                        <span class="trending-text">AI大模型</span>
+                        <div class="trending-heat">
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <span class="trending-rank top">2</span>
+                        <span class="trending-text">新能源汽车</span>
+                        <div class="trending-heat">
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar"></span>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <span class="trending-rank">3</span>
+                        <span class="trending-text">半导体</span>
+                        <div class="trending-heat">
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar"></span>
+                            <span class="heat-bar"></span>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <span class="trending-rank">4</span>
+                        <span class="trending-text">生物医药</span>
+                        <div class="trending-heat">
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar"></span>
+                            <span class="heat-bar"></span>
+                            <span class="heat-bar"></span>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <span class="trending-rank">5</span>
+                        <span class="trending-text">量子计算</span>
+                        <div class="trending-heat">
+                            <span class="heat-bar active"></span>
+                            <span class="heat-bar"></span>
+                            <span class="heat-bar"></span>
+                            <span class="heat-bar"></span>
+                            <span class="heat-bar"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    分类筛选
+                </h3>
+                <div class="category-list">
+                    <div class="category-item active" data-category="all">
+                        <div class="category-dot" style="background: linear-gradient(135deg, var(--hot-gradient-start), var(--hot-gradient-end));"></div>
+                        <span class="category-name">全部分类</span>
+                        <span class="category-count" id="catAll">0</span>
+                    </div>
+                    <div class="category-item" data-category="科技" style="--cat-color: var(--track-ai);">
+                        <div class="category-dot" style="background: var(--track-ai);"></div>
+                        <span class="category-name">科技</span>
+                        <span class="category-count" id="catTech">0</span>
+                    </div>
+                    <div class="category-item" data-category="财经">
+                        <div class="category-dot" style="background: var(--track-new-energy);"></div>
+                        <span class="category-name">财经</span>
+                        <span class="category-count" id="catFinance">0</span>
+                    </div>
+                    <div class="category-item" data-category="商业">
+                        <div class="category-dot" style="background: var(--track-semiconductor);"></div>
+                        <span class="category-name">商业</span>
+                        <span class="category-count" id="catBusiness">0</span>
+                    </div>
+                    <div class="category-item" data-category="AI">
+                        <div class="category-dot" style="background: var(--track-ai);"></div>
+                        <span class="category-name">AI</span>
+                        <span class="category-count" id="catAi">0</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <section class="content-area">
+            <div class="content-header">
+                <h2 class="content-title">
+                    热点新闻
+                    <span class="content-count" id="newsCount">0 条</span>
+                </h2>
+                <div class="content-sort">
+                    <button class="sort-btn active" data-sort="heat">热度排序</button>
+                    <button class="sort-btn" data-sort="time">最新</button>
+                </div>
+            </div>
+
+            <!-- API Key Notice -->
+            <div class="api-notice" id="apiNotice">
+                <div class="api-notice-title">需要配置 Bing API Key</div>
+                <div class="api-notice-text">请在环境变量中添加 <code>VITE_BING_API_KEY</code> 以获取实时热点新闻</div>
+                <button class="api-notice-btn" id="retryBtn">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    重试加载
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div class="article-list" id="loadingState" style="display: none;">
+                <div class="loading-card">
+                    <div class="loading-avatar"></div>
+                    <div class="loading-content">
+                        <div class="loading-line medium"></div>
+                        <div class="loading-line short"></div>
+                    </div>
+                </div>
+                <div class="loading-card">
+                    <div class="loading-avatar"></div>
+                    <div class="loading-content">
+                        <div class="loading-line medium"></div>
+                        <div class="loading-line short"></div>
+                    </div>
+                </div>
+                <div class="loading-card">
+                    <div class="loading-avatar"></div>
+                    <div class="loading-content">
+                        <div class="loading-line medium"></div>
+                        <div class="loading-line short"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Article List -->
+            <div class="article-list" id="articleList"></div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h3 class="empty-title">暂无热点新闻</h3>
+                <p class="empty-text">当前没有找到符合条件的热点新闻，请尝试其他关键词</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const searchClear = document.getElementById('searchClear');
+        const filterChips = document.querySelectorAll('.filter-chip');
+        const categoryItems = document.querySelectorAll('.category-item');
+        const sortBtns = document.querySelectorAll('.sort-btn');
+        const articleList = document.getElementById('articleList');
+        const emptyState = document.getElementById('emptyState');
+        const loadingState = document.getElementById('loadingState');
+        const apiNotice = document.getElementById('apiNotice');
+        const retryBtn = document.getElementById('retryBtn');
+
+        let currentFilter = 'all';
+        let currentCategory = 'all';
+        let currentSort = 'heat';
+        let allArticles = [];
+        let bookmarkedIds = new Set();
+
+        // SerpAPI Key
+        const API_KEY = import.meta.env?.VITE_SERP_API_KEY || 'ce0ecc29867577e3576572985dcc25ceee1d89b8c57e986656c3cb5a320d8380';
+        const API_ENDPOINT = 'https://serpapi.com/search';
+
+        // Mock data for demonstration
+        const mockData = [
+            {
+                name: 'OpenAI发布GPT-5新特性，引发行业轰动',
+                url: '#',
+                source: { name: 'TechCrunch' },
+                datePublished: new Date(Date.now() - 3600000).toISOString(),
+                description: 'OpenAI在今日凌晨公布了GPT-5的多项新特性，其中包括更强大的推理能力和多模态理解性能，技术专家称这将开启AI应用的新纪元。',
+                category: 'AI',
+                provider: [{ name: 'OpenAI' }]
+            },
+            {
+                name: '特斯拉新款Model 3订单量突破50万辆',
+                url: '#',
+                source: { name: 'Reuters' },
+                datePublished: new Date(Date.now() - 7200000).toISOString(),
+                description: '特斯拉官方数据显示，新款Model 3发布后24小时内订单量已突破50万辆，创下电动汽车预订新纪录。',
+                category: '科技',
+                provider: [{ name: '特斯拉' }]
+            },
+            {
+                name: '英伟达宣布新一代AI芯片量产计划',
+                url: '#',
+                source: { name: 'Bloomberg' },
+                datePublished: new Date(Date.now() - 10800000).toISOString(),
+                description: '英伟达在今日的投资者大会上宣布，B100系列AI芯片将于下月开始量产，预计将大幅提升大模型训练效率。',
+                category: '科技',
+                provider: [{ name: '英伟达' }]
+            },
+            {
+                name: '央行宣布定向降准，释放流动性约5000亿',
+                url: '#',
+                source: { name: '财新网' },
+                datePublished: new Date(Date.now() - 14400000).toISOString(),
+                description: '中国人民银行今日宣布定向降准0.25个百分点，预计释放长期资金约5000亿元，旨在支持小微企业和绿色金融发展。',
+                category: '财经',
+                provider: [{ name: '中国人民银行' }]
+            },
+            {
+                name: '字节跳动海外收入首次超过国内',
+                url: '#',
+                source: { name: '36Kr' },
+                datePublished: new Date(Date.now() - 18000000).toISOString(),
+                description: '字节跳动最新财报显示，其海外业务收入已占公司总收入的53%，首次超越国内业务，TikTok成为最大增长引擎。',
+                category: '商业',
+                provider: [{ name: '字节跳动' }]
+            },
+            {
+                name: 'SpaceX星舰完成第四次试飞',
+                url: '#',
+                source: { name: 'Space News' },
+                datePublished: new Date(Date.now() - 21600000).toISOString(),
+                description: 'SpaceX今日完成星舰第四次试飞，火箭成功实现受控着陆，标志着可重复使用火箭技术取得重大突破。',
+                category: '科技',
+                provider: [{ name: 'SpaceX' }]
+            },
+            {
+                name: '苹果Vision Pro 2曝光：更轻薄、定价更低',
+                url: '#',
+                source: { name: 'The Verge' },
+                datePublished: new Date(Date.now() - 25200000).toISOString(),
+                description: '供应链消息显示，苹果Vision Pro第二代产品正在研发中，机身厚度减少40%，定价将降至1999美元，目标出货量100万台。',
+                category: '科技',
+                provider: [{ name: '苹果' }]
+            },
+            {
+                name: 'A股三大指数集体上涨，AI板块领涨',
+                url: '#',
+                source: { name: '东方财富' },
+                datePublished: new Date(Date.now() - 28800000).toISOString(),
+                description: '今日A股三大指数集体收涨，沪指涨2.1%，AI概念股全面爆发，寒武纪、云从科技等多股涨停。',
+                category: '财经',
+                provider: [{ name: '证监会' }]
+            }
+        ];
+
+        // Category mapping for Bing News categories
+        const categoryMap = {
+            'all': '',
+            'tech': 'Technology',
+            'finance': 'Business',
+            'business': 'Business',
+            'ai': 'Technology'
+        };
+
+        // Format relative time
+        function formatRelativeTime(dateStr) {
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diff = now - date;
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor(diff / 60000);
+
+            if (hours < 1) return `${minutes}分钟前`;
+            if (hours < 24) return `${hours}小时前`;
+            return `${Math.floor(hours / 24)}天前`;
+        }
+
+        // Get category color
+        function getCategoryColor(category) {
+            const colors = {
+                'AI': 'var(--track-ai)',
+                '科技': 'var(--track-ai)',
+                '财经': 'var(--track-new-energy)',
+                '商业': 'var(--track-semiconductor)'
+            };
+            return colors[category] || 'var(--text-muted)';
+        }
+
+        // Render article card
+        function renderArticleCard(article, index) {
+            const isBookmarked = bookmarkedIds.has(article.url);
+            const rank = index + 1;
+            const rankClass = rank === 1 ? 'top1' : '';
+
+            return `
+                <article class="article-card" data-url="${article.url}" data-category="${article.category}">
+                    <div class="article-card-header">
+                        <div class="article-rank-badge ${rankClass}">${rank}</div>
+                        <div class="article-content">
+                            <div class="article-meta">
+                                <span class="article-category" style="background: ${getCategoryColor(article.category)}">${article.category}</span>
+                                <span class="article-source">${article.source.name}</span>
+                                <span class="article-time">${formatRelativeTime(article.datePublished)}</span>
+                            </div>
+                            <h3 class="article-title">
+                                <a href="${article.url}" target="_blank" rel="noopener">${article.name}</a>
+                            </h3>
+                            <p class="article-excerpt">${article.description}</p>
+                            <div class="article-footer">
+                                <div class="article-actions">
+                                    <button class="article-action-btn bookmark ${isBookmarked ? 'active' : ''}" title="收藏" data-url="${article.url}">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            ${isBookmarked
+                                                ? '<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>'
+                                                : '<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>'
+                                            }
+                                        </svg>
+                                    </button>
+                                    <button class="article-action-btn" title="分享">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <circle cx="18" cy="5" r="3"></circle>
+                                            <circle cx="6" cy="12" r="3"></circle>
+                                            <circle cx="18" cy="19" r="3"></circle>
+                                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        // Update stats
+        function updateStats(articles) {
+            const total = articles.length;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('newsCount').textContent = `${total} 条`;
+            document.getElementById('totalStat').textContent = total;
+
+            const now = new Date();
+            document.getElementById('updateTime').textContent = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            // Count by category
+            const categories = {
+                '科技': 0, '财经': 0, '商业': 0, 'AI': 0
+            };
+            articles.forEach(a => {
+                if (categories.hasOwnProperty(a.category)) {
+                    categories[a.category]++;
+                }
+            });
+
+            document.getElementById('techCount').textContent = categories['科技'] + categories['AI'];
+            document.getElementById('financeCount').textContent = categories['财经'];
+            document.getElementById('businessCount').textContent = categories['商业'];
+            document.getElementById('aiCount').textContent = categories['AI'];
+
+            document.getElementById('catAll').textContent = total;
+            document.getElementById('catTech').textContent = categories['科技'];
+            document.getElementById('catFinance').textContent = categories['财经'];
+            document.getElementById('catBusiness').textContent = categories['商业'];
+            document.getElementById('catAi').textContent = categories['AI'];
+        }
+
+        // Filter and render articles
+        function filterAndRender() {
+            let filtered = allArticles;
+
+            // Category filter
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(a => a.category === currentCategory);
+            }
+
+            // Search filter
+            const query = searchInput.value.toLowerCase().trim();
+            if (query) {
+                filtered = filtered.filter(a =>
+                    a.name.toLowerCase().includes(query) ||
+                    a.description.toLowerCase().includes(query) ||
+                    a.source.name.toLowerCase().includes(query)
+                );
+            }
+
+            // Sort
+            if (currentSort === 'heat') {
+                // Already sorted by heat (index)
+                filtered = [...filtered].sort((a, b) => {
+                    const indexA = allArticles.indexOf(a);
+                    const indexB = allArticles.indexOf(b);
+                    return indexA - indexB;
+                });
+            } else {
+                // Sort by time
+                filtered = [...filtered].sort((a, b) =>
+                    new Date(b.datePublished) - new Date(a.datePublished)
+                );
+            }
+
+            // Render
+            if (filtered.length === 0) {
+                articleList.innerHTML = '';
+                emptyState.style.display = 'flex';
+            } else {
+                emptyState.style.display = 'none';
+                articleList.innerHTML = filtered.map((article, i) => renderArticleCard(article, i)).join('');
+            }
+        }
+
+        // Fetch news from SerpAPI
+        async function fetchNews(query = '今日热点') {
+            if (!API_KEY) {
+                // Use mock data
+                allArticles = mockData;
+                updateStats(allArticles);
+                filterAndRender();
+                apiNotice.style.display = 'block';
+                return;
+            }
+
+            loadingState.style.display = 'flex';
+            apiNotice.style.display = 'none';
+            emptyState.style.display = 'none';
+
+            try {
+                const searchQueries = {
+                    'all': '今日热点 科技 财经',
+                    'tech': '科技新闻',
+                    'finance': '财经新闻',
+                    'business': '商业新闻',
+                    'ai': 'AI 人工智能新闻'
+                };
+                const searchQuery = searchQueries[currentFilter] || searchQueries['all'];
+
+                const url = new URL(API_ENDPOINT);
+                url.searchParams.set('q', searchQuery);
+                url.searchParams.set('engine', 'baidu_news');
+                url.searchParams.set('api_key', API_KEY);
+
+                const response = await fetch(url.toString());
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Map SerpAPI results to our format
+                allArticles = (data.news_results || []).map((item) => ({
+                    name: item.title,
+                    url: item.link,
+                    source: { name: item.source || 'Unknown' },
+                    datePublished: item.date || new Date().toISOString(),
+                    description: item.snippet || '',
+                    category: mapSerpCategory(item),
+                    provider: []
+                }));
+
+                // Update trending from news titles
+                updateTrendingFromNews(allArticles);
+
+                updateStats(allArticles);
+                filterAndRender();
+
+            } catch (error) {
+                console.error('Failed to fetch news:', error);
+                allArticles = mockData;
+                updateStats(allArticles);
+                filterAndRender();
+                apiNotice.style.display = 'block';
+            } finally {
+                loadingState.style.display = 'none';
+            }
+        }
+
+        // Map Bing category to our categories
+        function mapBingCategory(bingCategory) {
+            if (!bingCategory) return '科技';
+            const cat = bingCategory.toLowerCase();
+            if (cat.includes('technology') || cat.includes('science')) return '科技';
+            if (cat.includes('business') || cat.includes('finance')) return '财经';
+            if (cat.includes('entertainment')) return '商业';
+            return '科技';
+        }
+
+        // Update trending from news
+        function updateTrendingFromNews(articles) {
+            const trendingList = document.getElementById('trendingList');
+            const keywords = ['AI', '人工智能', '新能源', '半导体', '生物医药', '量子计算', '芯片', '电动汽车'];
+
+            // Extract top keywords from titles
+            const topKeywords = keywords.slice(0, 5);
+
+            trendingList.innerHTML = topKeywords.map((keyword, i) => {
+                const heatLevel = Math.max(1, 5 - i);
+                return `
+                    <div class="trending-item" data-keyword="${keyword}">
+                        <span class="trending-rank ${i < 2 ? 'top' : ''}">${i + 1}</span>
+                        <span class="trending-text">${keyword}</span>
+                        <div class="trending-heat">
+                            ${[1,2,3,4,5].map(n => `<span class="heat-bar ${n <= heatLevel ? 'active' : ''}"></span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add click handlers
+            trendingList.querySelectorAll('.trending-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const keyword = item.dataset.keyword;
+                    searchInput.value = keyword;
+                    searchClear.classList.add('visible');
+                    filterAndRender();
+                });
+            });
+        }
+
+        // Event Listeners
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            searchClear.classList.toggle('visible', query.length > 0);
+            filterAndRender();
+        });
+
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchClear.classList.remove('visible');
+            filterAndRender();
+            searchInput.focus();
+        });
+
+        filterChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                filterChips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                currentFilter = chip.dataset.filter;
+                fetchNews();
+            });
+        });
+
+        categoryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                categoryItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                currentCategory = item.dataset.category;
+                filterAndRender();
+            });
+        });
+
+        sortBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sortBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSort = btn.dataset.sort;
+                filterAndRender();
+            });
+        });
+
+        // Bookmark toggle
+        articleList.addEventListener('click', (e) => {
+            const bookmarkBtn = e.target.closest('.bookmark');
+            if (bookmarkBtn) {
+                bookmarkBtn.classList.toggle('active');
+                const url = bookmarkBtn.dataset.url;
+                if (bookmarkedIds.has(url)) {
+                    bookmarkedIds.delete(url);
+                } else {
+                    bookmarkedIds.add(url);
+                }
+                // Update icon
+                const isBookmarked = bookmarkedIds.has(url);
+                bookmarkBtn.innerHTML = `
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="${isBookmarked ? 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z' : 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'}"></path>
+                    </svg>
+                `;
+            }
+        });
+
+        retryBtn.addEventListener('click', () => {
+            fetchNews();
+        });
+
+        // Initial load
+        fetchNews();
+
+        // Auto refresh every 5 minutes
+        setInterval(() => {
+            if (!API_KEY) return; // Don't auto-refresh without API key
+            fetchNews();
+        }, 300000);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -2,6 +2,7 @@ import asyncio
 import logging
 import logging.handlers
 import random
+from pathlib import Path
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from app.services.ai import ai_service
@@ -11,10 +12,13 @@ MAX_EVENTS_PER_RUN = 20  # 每次最多处理条数
 MAX_CONCURRENCY = 5     # 并发数
 
 # 配置日志到文件
+LOG_DIR = Path(__file__).resolve().parents[2] / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 file_handler = logging.handlers.RotatingFileHandler(
-    'logs/scheduler.log', maxBytes=10*1024*1024, backupCount=5
+    LOG_DIR / "scheduler.log", maxBytes=10*1024*1024, backupCount=5
 )
 file_handler.setFormatter(logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

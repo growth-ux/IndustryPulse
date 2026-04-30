@@ -34,10 +34,12 @@ async def shutdown():
 from app.api import timeline
 from app.api.insights import router as insights_router
 from app.api.favorites import router as favorites_router
+from app.api.hot import router as hot_router
 
 app.include_router(timeline.router, prefix="/api", tags=["timeline"])
 app.include_router(insights_router, prefix="/api", tags=["insights"])
 app.include_router(favorites_router, prefix="/api", tags=["favorites"])
+app.include_router(hot_router, prefix="/api", tags=["hot"])
 
 @app.get("/")
 async def root():

@@ -4,13 +4,17 @@ import logging
 import logging.handlers
 import random
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import List, Dict
 from app.config import settings
+
+LOG_DIR = Path(__file__).resolve().parents[2] / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 file_handler = logging.handlers.RotatingFileHandler(
-    'logs/crawler.log', maxBytes=10*1024*1024, backupCount=5
+    LOG_DIR / "crawler.log", maxBytes=10*1024*1024, backupCount=5
 )
 file_handler.setFormatter(logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
