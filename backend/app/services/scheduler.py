@@ -86,9 +86,11 @@ class PeriodicCrawler:
     async def _crawl_keyword_source(self, keyword: str, source):
         """爬取单个关键词+订阅源组合"""
         try:
+            logger.info(f"[Crawl] Starting keyword={keyword} source={source.name} url={source.url} type={source.crawl_type}")
             from app.services.crawlers import CrawlerFactory
             crawler = CrawlerFactory.create(source)
             events = await crawler.crawl(keyword, "month")
+            logger.info(f"[Crawl] Completed keyword={keyword} source={source.name} events_count={len(events)}")
             events = events[:MAX_EVENTS_PER_RUN]
 
             semaphore = asyncio.Semaphore(MAX_CONCURRENCY)

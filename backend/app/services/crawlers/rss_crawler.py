@@ -60,7 +60,8 @@ class RSSCrawler(CrawlerBase):
 
         async with httpx.AsyncClient(
             timeout=30.0,
-            headers={"User-Agent": "Mozilla/5.0 (compatible; IndustryPulse/1.0)"}
+            headers={"User-Agent": "Mozilla/5.0 (compatible; IndustryPulse/1.0)"},
+            follow_redirects=True,
         ) as client:
             try:
                 url = self.source.url
@@ -70,13 +71,17 @@ class RSSCrawler(CrawlerBase):
 
                 response = await client.get(url)
                 if response.status_code == 403:
-                    logger.warning(f"[RSS] 403 Forbidden, skipping {self.source.name}")
+                    logger.warning(f"[RSS] 403 Forbidden, skipping {self.source.name}: {url}")
                     return []
                 if response.status_code != 200:
-                    logger.error(f"[RSS] HTTP {response.status_code} for {self.source.name}")
+                    logger.error(f"[RSS] HTTP {response.status_code} for {self.source.name}: {url}")
                     return []
 
                 feed = feedparser.parse(response.text)
+                if not feed.entries:
+                    logger.warning(f"[RSS] No entries in feed for {self.source.name}: {url}")
+                    return []
+                logger.info(f"[RSS] Fetched {self.source.name}: status={response.status_code} entries={len(feed.entries)}")
                 for entry in feed.entries[:50]:
                     if not self._filter_by_keyword(entry, keyword):
                         continue
