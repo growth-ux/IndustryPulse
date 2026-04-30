@@ -28,6 +28,9 @@ class CrawlerFactory:
         if source.crawl_type == CrawlType.RSS:
             from app.services.crawlers.rss_crawler import RSSCrawler
             return RSSCrawler(source)
+        elif source.crawl_type == CrawlType.SITEMAP:
+            from app.services.crawlers.sitemap_crawler import SitemapCrawler
+            return SitemapCrawler(source)
         elif source.crawl_type == CrawlType.HTML:
             from app.services.crawlers.html_crawler import HTMLCrawler
             return HTMLCrawler(source)
