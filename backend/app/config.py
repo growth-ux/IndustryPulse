@@ -32,3 +32,21 @@ class Settings(BaseSettings):
         extra = "ignore"
 
 settings = Settings()
+
+
+def _mask_secret(value: str) -> str:
+    if not value:
+        return "<empty>"
+    if len(value) <= 4:
+        return "*" * len(value)
+    return f"{value[:2]}{'*' * (len(value) - 4)}{value[-2:]}"
+
+
+def print_database_settings() -> None:
+    """Print database connection settings before the app starts."""
+    print("[database config]")
+    print(f"  host: {settings.db_host}")
+    print(f"  port: {settings.db_port}")
+    print(f"  user: {settings.db_user}")
+    print(f"  password: {settings.db_password}")
+    print(f"  database: {settings.db_name}")
